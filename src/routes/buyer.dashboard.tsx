@@ -11,7 +11,7 @@ export const Route = createFileRoute("/buyer/dashboard")({
 function BuyerDashboard() {
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Metric label="Active Orders" value={String(BUYER.active)} />
         <Metric label="Total Spent" value={ghs(BUYER.totalSpent)} />
         <Metric label="Completed Orders" value={String(BUYER.completed)} />
