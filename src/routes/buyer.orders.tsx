@@ -29,27 +29,27 @@ function BuyerOrders() {
         </div>
       )}
 
-      <div className="flex gap-2 border-b border-[#E2E8F0]">
+      <div className="flex gap-2 border-b border-[#E2E8F0] overflow-x-auto">
         {(["Active", "In Transit", "Completed"] as const).map((t) => (
-          <button key={t} onClick={() => setTab(t)} className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px ${tab === t ? "border-[#2E7D32] text-[#2E7D32]" : "border-transparent text-[#64748B]"}`}>{t}</button>
+          <button key={t} onClick={() => setTab(t)} className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px whitespace-nowrap ${tab === t ? "border-[#2E7D32] text-[#2E7D32]" : "border-transparent text-[#64748B]"}`}>{t}</button>
         ))}
       </div>
 
       <div className="space-y-3">
         {groups[tab].length === 0 && <div className="rounded-xl border border-dashed border-[#E2E8F0] bg-white p-12 text-center text-sm text-[#64748B]">No {tab.toLowerCase()} orders</div>}
         {groups[tab].map((o) => (
-          <div key={o.id} className="rounded-xl border border-[#E2E8F0] bg-white p-4 flex items-center gap-4">
-            <img src={o.image} alt="" className="h-14 w-14 rounded-lg object-cover" />
+          <div key={o.id} className="rounded-xl border border-[#E2E8F0] bg-white p-4 flex flex-wrap sm:flex-nowrap items-center gap-3 sm:gap-4">
+            <img src={o.image} alt="" className="h-14 w-14 shrink-0 rounded-lg object-cover" />
             <div className="flex-1 min-w-0">
-              <div className="font-display font-semibold">{o.crop}</div>
-              <div className="text-xs text-[#64748B]">{o.farmer} · {o.qty}kg · {o.region} · {o.date}</div>
+              <div className="font-display font-semibold truncate">{o.crop}</div>
+              <div className="text-xs text-[#64748B] truncate">{o.farmer} · {o.qty}kg · {o.region} · {o.date}</div>
             </div>
-            <div className="text-right">
+            <div className="text-right shrink-0">
               <div className="font-display font-semibold">{ghs(o.value)}</div>
               <div className="mt-1"><EscrowPill status={o.escrow} /></div>
             </div>
             {tab === "In Transit" && (
-              <button onClick={() => setBanner("Escrow released — funds sent to farmer")} className="rounded-lg bg-[#2E7D32] px-4 py-2 text-xs font-medium text-white">Confirm Delivery</button>
+              <button onClick={() => setBanner("Escrow released — funds sent to farmer")} className="w-full sm:w-auto rounded-lg bg-[#2E7D32] px-4 py-2 text-xs font-medium text-white">Confirm Delivery</button>
             )}
           </div>
         ))}

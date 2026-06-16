@@ -40,17 +40,19 @@ function FarmerOrders() {
       ) : (
         <div className="space-y-3">
           {list.map((o) => (
-            <div key={o.id} className="rounded-xl border border-[#E2E8F0] bg-white p-4 flex items-center gap-4">
-              <img src={o.image} alt="" className="h-12 w-12 rounded-lg object-cover" />
+            <div key={o.id} className="rounded-xl border border-[#E2E8F0] bg-white p-4 flex flex-wrap sm:flex-nowrap items-center gap-3 sm:gap-4">
+              <img src={o.image} alt="" className="h-12 w-12 shrink-0 rounded-lg object-cover" />
               <div className="flex-1 min-w-0">
-                <div className="font-display font-semibold text-[#1E293B]">{o.crop}</div>
-                <div className="text-xs text-[#64748B]">Buyer: {o.buyer} · {o.qty}kg · {o.region}</div>
+                <div className="font-display font-semibold text-[#1E293B] truncate">{o.crop}</div>
+                <div className="text-xs text-[#64748B] truncate">Buyer: {o.buyer} · {o.qty}kg · {o.region}</div>
               </div>
-              <div className="text-right">
+              <div className="text-right shrink-0">
                 <div className="font-display font-semibold text-[#1E293B]">{ghs(o.value)}</div>
                 <div className="mt-1"><EscrowPill status={o.escrow} /></div>
               </div>
-              <ActionButton tab={tab} />
+              <div className="w-full sm:w-auto sm:shrink-0">
+                <ActionButton tab={tab} />
+              </div>
             </div>
           ))}
         </div>

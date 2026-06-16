@@ -69,11 +69,11 @@ function Analytics() {
       <div className="grid lg:grid-cols-2 gap-6">
         <div className="rounded-xl border border-[#E2E8F0] bg-white p-5">
           <h3 className="font-display font-semibold mb-4">Top crops</h3>
-          <div className="flex items-center gap-6">
-            <div className="h-36 w-36 rounded-full relative" style={{ background: `conic-gradient(${gradStops})` }}>
+          <div className="flex flex-col sm:flex-row items-center gap-6">
+            <div className="h-36 w-36 shrink-0 rounded-full relative" style={{ background: `conic-gradient(${gradStops})` }}>
               <div className="absolute inset-6 rounded-full bg-white" />
             </div>
-            <div className="space-y-2 text-sm">
+            <div className="space-y-2 text-sm w-full sm:w-auto">
               {DONUT.map((d) => (
                 <div key={d.label} className="flex items-center gap-2">
                   <span className="h-3 w-3 rounded-sm" style={{ backgroundColor: d.color }} />
@@ -87,16 +87,18 @@ function Analytics() {
 
         <div className="rounded-xl border border-[#E2E8F0] bg-white p-5">
           <h3 className="font-display font-semibold mb-4">Top suppliers</h3>
-          <table className="w-full text-sm">
-            <thead className="text-left text-xs text-[#64748B] border-b border-[#E2E8F0]">
-              <tr><th className="pb-2 font-medium">Farmer</th><th className="pb-2 font-medium">Region</th><th className="pb-2 font-medium">Orders</th><th className="pb-2 font-medium text-right">Total</th></tr>
-            </thead>
-            <tbody className="divide-y divide-[#E2E8F0]">
-              {SUPPLIERS.map((s) => (
-                <tr key={s.name}><td className="py-2 font-medium">{s.name}</td><td className="py-2 text-[#64748B]">{s.region}</td><td className="py-2">{s.orders}</td><td className="py-2 text-right">{ghs(s.value)}</td></tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[480px] text-sm">
+              <thead className="text-left text-xs text-[#64748B] border-b border-[#E2E8F0]">
+                <tr><th className="pb-2 font-medium">Farmer</th><th className="pb-2 font-medium">Region</th><th className="pb-2 font-medium">Orders</th><th className="pb-2 font-medium text-right">Total</th></tr>
+              </thead>
+              <tbody className="divide-y divide-[#E2E8F0]">
+                {SUPPLIERS.map((s) => (
+                  <tr key={s.name}><td className="py-2 font-medium">{s.name}</td><td className="py-2 text-[#64748B]">{s.region}</td><td className="py-2">{s.orders}</td><td className="py-2 text-right">{ghs(s.value)}</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

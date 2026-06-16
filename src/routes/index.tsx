@@ -24,7 +24,7 @@ function Landing() {
           alt=""
           className="absolute inset-0 h-full w-full object-cover opacity-30"
         />
-        <div className="relative z-10 mx-auto max-w-7xl px-6 pt-6">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 pt-6">
           <nav className="flex items-center justify-between">
             <Logo light />
             <div className="hidden md:flex items-center gap-8 text-sm text-white/80">
@@ -33,18 +33,19 @@ function Landing() {
               <a href="#tools" className="hover:text-white">For Buyers</a>
               <Link to="/signin" className="hover:text-white">Sign In</Link>
             </div>
+            <Link to="/signin" className="md:hidden text-sm text-white/80 hover:text-white">Sign In</Link>
           </nav>
         </div>
 
-        <div className="relative z-10 mx-auto max-w-7xl px-6 py-20 md:py-28">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-20 md:py-28">
           <div className="max-w-3xl">
-            <h1 className="font-display text-4xl md:text-6xl font-bold leading-tight">
+            <h1 className="font-display text-3xl sm:text-4xl md:text-6xl font-bold leading-tight">
               Connecting Farmers.<br />Financing Growth.
             </h1>
-            <p className="mt-6 max-w-2xl text-lg text-white/70">
+            <p className="mt-5 sm:mt-6 max-w-2xl text-base sm:text-lg text-white/70">
               Ghana's first Agri-Fintech marketplace — fair prices, secure payments, instant financing.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-8 flex flex-col sm:flex-row flex-wrap gap-3">
               <Link to="/signup" className="inline-flex items-center justify-center rounded-lg bg-[#2E7D32] px-6 py-3 text-sm font-medium text-white hover:bg-[#256528]">
                 Join as Farmer
               </Link>
@@ -53,11 +54,11 @@ function Landing() {
               </Link>
             </div>
 
-            <div className="mt-10 flex flex-wrap gap-3">
-              <Link to="/farmer/dashboard" className="inline-flex items-center gap-2 rounded-lg bg-white/10 backdrop-blur px-5 py-2.5 text-sm font-medium text-white hover:bg-white/20 border border-white/20">
+            <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row flex-wrap gap-3">
+              <Link to="/farmer/dashboard" className="inline-flex items-center justify-center gap-2 rounded-lg bg-white/10 backdrop-blur px-5 py-2.5 text-sm font-medium text-white hover:bg-white/20 border border-white/20">
                 Preview as Farmer <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link to="/buyer/dashboard" className="inline-flex items-center gap-2 rounded-lg bg-white/10 backdrop-blur px-5 py-2.5 text-sm font-medium text-white hover:bg-white/20 border border-white/20">
+              <Link to="/buyer/dashboard" className="inline-flex items-center justify-center gap-2 rounded-lg bg-white/10 backdrop-blur px-5 py-2.5 text-sm font-medium text-white hover:bg-white/20 border border-white/20">
                 Preview as Buyer <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
@@ -194,7 +195,7 @@ function Landing() {
 
       {/* FOOTER */}
       <footer className="bg-white border-t border-[#E2E8F0] py-12">
-        <div className="mx-auto max-w-7xl px-6 grid md:grid-cols-3 gap-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           <div>
             <Logo />
             <p className="mt-3 text-sm text-[#64748B]">Connecting farmers. Financing growth.</p>
