@@ -9,10 +9,28 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifyRouteImport } from './routes/verify'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SigninRouteImport } from './routes/signin'
 import { Route as FarmerRouteImport } from './routes/farmer'
 import { Route as BuyerRouteImport } from './routes/buyer'
 import { Route as IndexRouteImport } from './routes/index'
 
+const VerifyRoute = VerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SigninRoute = SigninRouteImport.update({
+  id: '/signin',
+  path: '/signin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FarmerRoute = FarmerRouteImport.update({
   id: '/farmer',
   path: '/farmer',
@@ -33,34 +51,74 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/buyer': typeof BuyerRoute
   '/farmer': typeof FarmerRoute
+  '/signin': typeof SigninRoute
+  '/signup': typeof SignupRoute
+  '/verify': typeof VerifyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/buyer': typeof BuyerRoute
   '/farmer': typeof FarmerRoute
+  '/signin': typeof SigninRoute
+  '/signup': typeof SignupRoute
+  '/verify': typeof VerifyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/buyer': typeof BuyerRoute
   '/farmer': typeof FarmerRoute
+  '/signin': typeof SigninRoute
+  '/signup': typeof SignupRoute
+  '/verify': typeof VerifyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/buyer' | '/farmer'
+  fullPaths: '/' | '/buyer' | '/farmer' | '/signin' | '/signup' | '/verify'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/buyer' | '/farmer'
-  id: '__root__' | '/' | '/buyer' | '/farmer'
+  to: '/' | '/buyer' | '/farmer' | '/signin' | '/signup' | '/verify'
+  id:
+    | '__root__'
+    | '/'
+    | '/buyer'
+    | '/farmer'
+    | '/signin'
+    | '/signup'
+    | '/verify'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BuyerRoute: typeof BuyerRoute
   FarmerRoute: typeof FarmerRoute
+  SigninRoute: typeof SigninRoute
+  SignupRoute: typeof SignupRoute
+  VerifyRoute: typeof VerifyRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verify': {
+      id: '/verify'
+      path: '/verify'
+      fullPath: '/verify'
+      preLoaderRoute: typeof VerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signin': {
+      id: '/signin'
+      path: '/signin'
+      fullPath: '/signin'
+      preLoaderRoute: typeof SigninRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/farmer': {
       id: '/farmer'
       path: '/farmer'
@@ -89,6 +147,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BuyerRoute: BuyerRoute,
   FarmerRoute: FarmerRoute,
+  SigninRoute: SigninRoute,
+  SignupRoute: SignupRoute,
+  VerifyRoute: VerifyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
