@@ -10,8 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyRouteImport } from './routes/verify'
+import { Route as UssdRouteImport } from './routes/ussd'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SigninRouteImport } from './routes/signin'
+import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as FarmerRouteImport } from './routes/farmer'
 import { Route as BuyerRouteImport } from './routes/buyer'
 import { Route as IndexRouteImport } from './routes/index'
@@ -23,10 +25,21 @@ import { Route as FarmerNotificationsRouteImport } from './routes/farmer.notific
 import { Route as FarmerListingsRouteImport } from './routes/farmer.listings'
 import { Route as FarmerFinanceRouteImport } from './routes/farmer.finance'
 import { Route as FarmerDashboardRouteImport } from './routes/farmer.dashboard'
+import { Route as BuyerSettingsRouteImport } from './routes/buyer.settings'
+import { Route as BuyerOrdersRouteImport } from './routes/buyer.orders'
+import { Route as BuyerNotificationsRouteImport } from './routes/buyer.notifications'
+import { Route as BuyerMarketplaceRouteImport } from './routes/buyer.marketplace'
+import { Route as BuyerDashboardRouteImport } from './routes/buyer.dashboard'
+import { Route as BuyerAnalyticsRouteImport } from './routes/buyer.analytics'
 
 const VerifyRoute = VerifyRouteImport.update({
   id: '/verify',
   path: '/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UssdRoute = UssdRouteImport.update({
+  id: '/ussd',
+  path: '/ussd',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
@@ -37,6 +50,11 @@ const SignupRoute = SignupRouteImport.update({
 const SigninRoute = SigninRouteImport.update({
   id: '/signin',
   path: '/signin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FarmerRoute = FarmerRouteImport.update({
@@ -94,14 +112,52 @@ const FarmerDashboardRoute = FarmerDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => FarmerRoute,
 } as any)
+const BuyerSettingsRoute = BuyerSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => BuyerRoute,
+} as any)
+const BuyerOrdersRoute = BuyerOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => BuyerRoute,
+} as any)
+const BuyerNotificationsRoute = BuyerNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => BuyerRoute,
+} as any)
+const BuyerMarketplaceRoute = BuyerMarketplaceRouteImport.update({
+  id: '/marketplace',
+  path: '/marketplace',
+  getParentRoute: () => BuyerRoute,
+} as any)
+const BuyerDashboardRoute = BuyerDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => BuyerRoute,
+} as any)
+const BuyerAnalyticsRoute = BuyerAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => BuyerRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/buyer': typeof BuyerRoute
+  '/buyer': typeof BuyerRouteWithChildren
   '/farmer': typeof FarmerRouteWithChildren
+  '/notifications': typeof NotificationsRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/ussd': typeof UssdRoute
   '/verify': typeof VerifyRoute
+  '/buyer/analytics': typeof BuyerAnalyticsRoute
+  '/buyer/dashboard': typeof BuyerDashboardRoute
+  '/buyer/marketplace': typeof BuyerMarketplaceRoute
+  '/buyer/notifications': typeof BuyerNotificationsRoute
+  '/buyer/orders': typeof BuyerOrdersRoute
+  '/buyer/settings': typeof BuyerSettingsRoute
   '/farmer/dashboard': typeof FarmerDashboardRoute
   '/farmer/finance': typeof FarmerFinanceRoute
   '/farmer/listings': typeof FarmerListingsRoute
@@ -113,11 +169,19 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/buyer': typeof BuyerRoute
+  '/buyer': typeof BuyerRouteWithChildren
   '/farmer': typeof FarmerRouteWithChildren
+  '/notifications': typeof NotificationsRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/ussd': typeof UssdRoute
   '/verify': typeof VerifyRoute
+  '/buyer/analytics': typeof BuyerAnalyticsRoute
+  '/buyer/dashboard': typeof BuyerDashboardRoute
+  '/buyer/marketplace': typeof BuyerMarketplaceRoute
+  '/buyer/notifications': typeof BuyerNotificationsRoute
+  '/buyer/orders': typeof BuyerOrdersRoute
+  '/buyer/settings': typeof BuyerSettingsRoute
   '/farmer/dashboard': typeof FarmerDashboardRoute
   '/farmer/finance': typeof FarmerFinanceRoute
   '/farmer/listings': typeof FarmerListingsRoute
@@ -130,11 +194,19 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/buyer': typeof BuyerRoute
+  '/buyer': typeof BuyerRouteWithChildren
   '/farmer': typeof FarmerRouteWithChildren
+  '/notifications': typeof NotificationsRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/ussd': typeof UssdRoute
   '/verify': typeof VerifyRoute
+  '/buyer/analytics': typeof BuyerAnalyticsRoute
+  '/buyer/dashboard': typeof BuyerDashboardRoute
+  '/buyer/marketplace': typeof BuyerMarketplaceRoute
+  '/buyer/notifications': typeof BuyerNotificationsRoute
+  '/buyer/orders': typeof BuyerOrdersRoute
+  '/buyer/settings': typeof BuyerSettingsRoute
   '/farmer/dashboard': typeof FarmerDashboardRoute
   '/farmer/finance': typeof FarmerFinanceRoute
   '/farmer/listings': typeof FarmerListingsRoute
@@ -150,9 +222,17 @@ export interface FileRouteTypes {
     | '/'
     | '/buyer'
     | '/farmer'
+    | '/notifications'
     | '/signin'
     | '/signup'
+    | '/ussd'
     | '/verify'
+    | '/buyer/analytics'
+    | '/buyer/dashboard'
+    | '/buyer/marketplace'
+    | '/buyer/notifications'
+    | '/buyer/orders'
+    | '/buyer/settings'
     | '/farmer/dashboard'
     | '/farmer/finance'
     | '/farmer/listings'
@@ -166,9 +246,17 @@ export interface FileRouteTypes {
     | '/'
     | '/buyer'
     | '/farmer'
+    | '/notifications'
     | '/signin'
     | '/signup'
+    | '/ussd'
     | '/verify'
+    | '/buyer/analytics'
+    | '/buyer/dashboard'
+    | '/buyer/marketplace'
+    | '/buyer/notifications'
+    | '/buyer/orders'
+    | '/buyer/settings'
     | '/farmer/dashboard'
     | '/farmer/finance'
     | '/farmer/listings'
@@ -182,9 +270,17 @@ export interface FileRouteTypes {
     | '/'
     | '/buyer'
     | '/farmer'
+    | '/notifications'
     | '/signin'
     | '/signup'
+    | '/ussd'
     | '/verify'
+    | '/buyer/analytics'
+    | '/buyer/dashboard'
+    | '/buyer/marketplace'
+    | '/buyer/notifications'
+    | '/buyer/orders'
+    | '/buyer/settings'
     | '/farmer/dashboard'
     | '/farmer/finance'
     | '/farmer/listings'
@@ -197,10 +293,12 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  BuyerRoute: typeof BuyerRoute
+  BuyerRoute: typeof BuyerRouteWithChildren
   FarmerRoute: typeof FarmerRouteWithChildren
+  NotificationsRoute: typeof NotificationsRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
+  UssdRoute: typeof UssdRoute
   VerifyRoute: typeof VerifyRoute
 }
 
@@ -211,6 +309,13 @@ declare module '@tanstack/react-router' {
       path: '/verify'
       fullPath: '/verify'
       preLoaderRoute: typeof VerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ussd': {
+      id: '/ussd'
+      path: '/ussd'
+      fullPath: '/ussd'
+      preLoaderRoute: typeof UssdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -225,6 +330,13 @@ declare module '@tanstack/react-router' {
       path: '/signin'
       fullPath: '/signin'
       preLoaderRoute: typeof SigninRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/farmer': {
@@ -304,8 +416,70 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FarmerDashboardRouteImport
       parentRoute: typeof FarmerRoute
     }
+    '/buyer/settings': {
+      id: '/buyer/settings'
+      path: '/settings'
+      fullPath: '/buyer/settings'
+      preLoaderRoute: typeof BuyerSettingsRouteImport
+      parentRoute: typeof BuyerRoute
+    }
+    '/buyer/orders': {
+      id: '/buyer/orders'
+      path: '/orders'
+      fullPath: '/buyer/orders'
+      preLoaderRoute: typeof BuyerOrdersRouteImport
+      parentRoute: typeof BuyerRoute
+    }
+    '/buyer/notifications': {
+      id: '/buyer/notifications'
+      path: '/notifications'
+      fullPath: '/buyer/notifications'
+      preLoaderRoute: typeof BuyerNotificationsRouteImport
+      parentRoute: typeof BuyerRoute
+    }
+    '/buyer/marketplace': {
+      id: '/buyer/marketplace'
+      path: '/marketplace'
+      fullPath: '/buyer/marketplace'
+      preLoaderRoute: typeof BuyerMarketplaceRouteImport
+      parentRoute: typeof BuyerRoute
+    }
+    '/buyer/dashboard': {
+      id: '/buyer/dashboard'
+      path: '/dashboard'
+      fullPath: '/buyer/dashboard'
+      preLoaderRoute: typeof BuyerDashboardRouteImport
+      parentRoute: typeof BuyerRoute
+    }
+    '/buyer/analytics': {
+      id: '/buyer/analytics'
+      path: '/analytics'
+      fullPath: '/buyer/analytics'
+      preLoaderRoute: typeof BuyerAnalyticsRouteImport
+      parentRoute: typeof BuyerRoute
+    }
   }
 }
+
+interface BuyerRouteChildren {
+  BuyerAnalyticsRoute: typeof BuyerAnalyticsRoute
+  BuyerDashboardRoute: typeof BuyerDashboardRoute
+  BuyerMarketplaceRoute: typeof BuyerMarketplaceRoute
+  BuyerNotificationsRoute: typeof BuyerNotificationsRoute
+  BuyerOrdersRoute: typeof BuyerOrdersRoute
+  BuyerSettingsRoute: typeof BuyerSettingsRoute
+}
+
+const BuyerRouteChildren: BuyerRouteChildren = {
+  BuyerAnalyticsRoute: BuyerAnalyticsRoute,
+  BuyerDashboardRoute: BuyerDashboardRoute,
+  BuyerMarketplaceRoute: BuyerMarketplaceRoute,
+  BuyerNotificationsRoute: BuyerNotificationsRoute,
+  BuyerOrdersRoute: BuyerOrdersRoute,
+  BuyerSettingsRoute: BuyerSettingsRoute,
+}
+
+const BuyerRouteWithChildren = BuyerRoute._addFileChildren(BuyerRouteChildren)
 
 interface FarmerRouteChildren {
   FarmerDashboardRoute: typeof FarmerDashboardRoute
@@ -334,10 +508,12 @@ const FarmerRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  BuyerRoute: BuyerRoute,
+  BuyerRoute: BuyerRouteWithChildren,
   FarmerRoute: FarmerRouteWithChildren,
+  NotificationsRoute: NotificationsRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
+  UssdRoute: UssdRoute,
   VerifyRoute: VerifyRoute,
 }
 export const routeTree = rootRouteImport
