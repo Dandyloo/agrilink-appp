@@ -15,6 +15,12 @@ import { Route as SigninRouteImport } from './routes/signin'
 import { Route as FarmerRouteImport } from './routes/farmer'
 import { Route as BuyerRouteImport } from './routes/buyer'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FarmerWalletRouteImport } from './routes/farmer.wallet'
+import { Route as FarmerPricesRouteImport } from './routes/farmer.prices'
+import { Route as FarmerOrdersRouteImport } from './routes/farmer.orders'
+import { Route as FarmerListingsRouteImport } from './routes/farmer.listings'
+import { Route as FarmerFinanceRouteImport } from './routes/farmer.finance'
+import { Route as FarmerDashboardRouteImport } from './routes/farmer.dashboard'
 
 const VerifyRoute = VerifyRouteImport.update({
   id: '/verify',
@@ -46,37 +52,109 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FarmerWalletRoute = FarmerWalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
+  getParentRoute: () => FarmerRoute,
+} as any)
+const FarmerPricesRoute = FarmerPricesRouteImport.update({
+  id: '/prices',
+  path: '/prices',
+  getParentRoute: () => FarmerRoute,
+} as any)
+const FarmerOrdersRoute = FarmerOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => FarmerRoute,
+} as any)
+const FarmerListingsRoute = FarmerListingsRouteImport.update({
+  id: '/listings',
+  path: '/listings',
+  getParentRoute: () => FarmerRoute,
+} as any)
+const FarmerFinanceRoute = FarmerFinanceRouteImport.update({
+  id: '/finance',
+  path: '/finance',
+  getParentRoute: () => FarmerRoute,
+} as any)
+const FarmerDashboardRoute = FarmerDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => FarmerRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/buyer': typeof BuyerRoute
-  '/farmer': typeof FarmerRoute
+  '/farmer': typeof FarmerRouteWithChildren
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/verify': typeof VerifyRoute
+  '/farmer/dashboard': typeof FarmerDashboardRoute
+  '/farmer/finance': typeof FarmerFinanceRoute
+  '/farmer/listings': typeof FarmerListingsRoute
+  '/farmer/orders': typeof FarmerOrdersRoute
+  '/farmer/prices': typeof FarmerPricesRoute
+  '/farmer/wallet': typeof FarmerWalletRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/buyer': typeof BuyerRoute
-  '/farmer': typeof FarmerRoute
+  '/farmer': typeof FarmerRouteWithChildren
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/verify': typeof VerifyRoute
+  '/farmer/dashboard': typeof FarmerDashboardRoute
+  '/farmer/finance': typeof FarmerFinanceRoute
+  '/farmer/listings': typeof FarmerListingsRoute
+  '/farmer/orders': typeof FarmerOrdersRoute
+  '/farmer/prices': typeof FarmerPricesRoute
+  '/farmer/wallet': typeof FarmerWalletRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/buyer': typeof BuyerRoute
-  '/farmer': typeof FarmerRoute
+  '/farmer': typeof FarmerRouteWithChildren
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/verify': typeof VerifyRoute
+  '/farmer/dashboard': typeof FarmerDashboardRoute
+  '/farmer/finance': typeof FarmerFinanceRoute
+  '/farmer/listings': typeof FarmerListingsRoute
+  '/farmer/orders': typeof FarmerOrdersRoute
+  '/farmer/prices': typeof FarmerPricesRoute
+  '/farmer/wallet': typeof FarmerWalletRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/buyer' | '/farmer' | '/signin' | '/signup' | '/verify'
+  fullPaths:
+    | '/'
+    | '/buyer'
+    | '/farmer'
+    | '/signin'
+    | '/signup'
+    | '/verify'
+    | '/farmer/dashboard'
+    | '/farmer/finance'
+    | '/farmer/listings'
+    | '/farmer/orders'
+    | '/farmer/prices'
+    | '/farmer/wallet'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/buyer' | '/farmer' | '/signin' | '/signup' | '/verify'
+  to:
+    | '/'
+    | '/buyer'
+    | '/farmer'
+    | '/signin'
+    | '/signup'
+    | '/verify'
+    | '/farmer/dashboard'
+    | '/farmer/finance'
+    | '/farmer/listings'
+    | '/farmer/orders'
+    | '/farmer/prices'
+    | '/farmer/wallet'
   id:
     | '__root__'
     | '/'
@@ -85,12 +163,18 @@ export interface FileRouteTypes {
     | '/signin'
     | '/signup'
     | '/verify'
+    | '/farmer/dashboard'
+    | '/farmer/finance'
+    | '/farmer/listings'
+    | '/farmer/orders'
+    | '/farmer/prices'
+    | '/farmer/wallet'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BuyerRoute: typeof BuyerRoute
-  FarmerRoute: typeof FarmerRoute
+  FarmerRoute: typeof FarmerRouteWithChildren
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
   VerifyRoute: typeof VerifyRoute
@@ -140,13 +224,76 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/farmer/wallet': {
+      id: '/farmer/wallet'
+      path: '/wallet'
+      fullPath: '/farmer/wallet'
+      preLoaderRoute: typeof FarmerWalletRouteImport
+      parentRoute: typeof FarmerRoute
+    }
+    '/farmer/prices': {
+      id: '/farmer/prices'
+      path: '/prices'
+      fullPath: '/farmer/prices'
+      preLoaderRoute: typeof FarmerPricesRouteImport
+      parentRoute: typeof FarmerRoute
+    }
+    '/farmer/orders': {
+      id: '/farmer/orders'
+      path: '/orders'
+      fullPath: '/farmer/orders'
+      preLoaderRoute: typeof FarmerOrdersRouteImport
+      parentRoute: typeof FarmerRoute
+    }
+    '/farmer/listings': {
+      id: '/farmer/listings'
+      path: '/listings'
+      fullPath: '/farmer/listings'
+      preLoaderRoute: typeof FarmerListingsRouteImport
+      parentRoute: typeof FarmerRoute
+    }
+    '/farmer/finance': {
+      id: '/farmer/finance'
+      path: '/finance'
+      fullPath: '/farmer/finance'
+      preLoaderRoute: typeof FarmerFinanceRouteImport
+      parentRoute: typeof FarmerRoute
+    }
+    '/farmer/dashboard': {
+      id: '/farmer/dashboard'
+      path: '/dashboard'
+      fullPath: '/farmer/dashboard'
+      preLoaderRoute: typeof FarmerDashboardRouteImport
+      parentRoute: typeof FarmerRoute
+    }
   }
 }
+
+interface FarmerRouteChildren {
+  FarmerDashboardRoute: typeof FarmerDashboardRoute
+  FarmerFinanceRoute: typeof FarmerFinanceRoute
+  FarmerListingsRoute: typeof FarmerListingsRoute
+  FarmerOrdersRoute: typeof FarmerOrdersRoute
+  FarmerPricesRoute: typeof FarmerPricesRoute
+  FarmerWalletRoute: typeof FarmerWalletRoute
+}
+
+const FarmerRouteChildren: FarmerRouteChildren = {
+  FarmerDashboardRoute: FarmerDashboardRoute,
+  FarmerFinanceRoute: FarmerFinanceRoute,
+  FarmerListingsRoute: FarmerListingsRoute,
+  FarmerOrdersRoute: FarmerOrdersRoute,
+  FarmerPricesRoute: FarmerPricesRoute,
+  FarmerWalletRoute: FarmerWalletRoute,
+}
+
+const FarmerRouteWithChildren =
+  FarmerRoute._addFileChildren(FarmerRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BuyerRoute: BuyerRoute,
-  FarmerRoute: FarmerRoute,
+  FarmerRoute: FarmerRouteWithChildren,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
   VerifyRoute: VerifyRoute,
