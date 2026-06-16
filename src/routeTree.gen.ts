@@ -16,8 +16,10 @@ import { Route as FarmerRouteImport } from './routes/farmer'
 import { Route as BuyerRouteImport } from './routes/buyer'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FarmerWalletRouteImport } from './routes/farmer.wallet'
+import { Route as FarmerSettingsRouteImport } from './routes/farmer.settings'
 import { Route as FarmerPricesRouteImport } from './routes/farmer.prices'
 import { Route as FarmerOrdersRouteImport } from './routes/farmer.orders'
+import { Route as FarmerNotificationsRouteImport } from './routes/farmer.notifications'
 import { Route as FarmerListingsRouteImport } from './routes/farmer.listings'
 import { Route as FarmerFinanceRouteImport } from './routes/farmer.finance'
 import { Route as FarmerDashboardRouteImport } from './routes/farmer.dashboard'
@@ -57,6 +59,11 @@ const FarmerWalletRoute = FarmerWalletRouteImport.update({
   path: '/wallet',
   getParentRoute: () => FarmerRoute,
 } as any)
+const FarmerSettingsRoute = FarmerSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => FarmerRoute,
+} as any)
 const FarmerPricesRoute = FarmerPricesRouteImport.update({
   id: '/prices',
   path: '/prices',
@@ -65,6 +72,11 @@ const FarmerPricesRoute = FarmerPricesRouteImport.update({
 const FarmerOrdersRoute = FarmerOrdersRouteImport.update({
   id: '/orders',
   path: '/orders',
+  getParentRoute: () => FarmerRoute,
+} as any)
+const FarmerNotificationsRoute = FarmerNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => FarmerRoute,
 } as any)
 const FarmerListingsRoute = FarmerListingsRouteImport.update({
@@ -93,8 +105,10 @@ export interface FileRoutesByFullPath {
   '/farmer/dashboard': typeof FarmerDashboardRoute
   '/farmer/finance': typeof FarmerFinanceRoute
   '/farmer/listings': typeof FarmerListingsRoute
+  '/farmer/notifications': typeof FarmerNotificationsRoute
   '/farmer/orders': typeof FarmerOrdersRoute
   '/farmer/prices': typeof FarmerPricesRoute
+  '/farmer/settings': typeof FarmerSettingsRoute
   '/farmer/wallet': typeof FarmerWalletRoute
 }
 export interface FileRoutesByTo {
@@ -107,8 +121,10 @@ export interface FileRoutesByTo {
   '/farmer/dashboard': typeof FarmerDashboardRoute
   '/farmer/finance': typeof FarmerFinanceRoute
   '/farmer/listings': typeof FarmerListingsRoute
+  '/farmer/notifications': typeof FarmerNotificationsRoute
   '/farmer/orders': typeof FarmerOrdersRoute
   '/farmer/prices': typeof FarmerPricesRoute
+  '/farmer/settings': typeof FarmerSettingsRoute
   '/farmer/wallet': typeof FarmerWalletRoute
 }
 export interface FileRoutesById {
@@ -122,8 +138,10 @@ export interface FileRoutesById {
   '/farmer/dashboard': typeof FarmerDashboardRoute
   '/farmer/finance': typeof FarmerFinanceRoute
   '/farmer/listings': typeof FarmerListingsRoute
+  '/farmer/notifications': typeof FarmerNotificationsRoute
   '/farmer/orders': typeof FarmerOrdersRoute
   '/farmer/prices': typeof FarmerPricesRoute
+  '/farmer/settings': typeof FarmerSettingsRoute
   '/farmer/wallet': typeof FarmerWalletRoute
 }
 export interface FileRouteTypes {
@@ -138,8 +156,10 @@ export interface FileRouteTypes {
     | '/farmer/dashboard'
     | '/farmer/finance'
     | '/farmer/listings'
+    | '/farmer/notifications'
     | '/farmer/orders'
     | '/farmer/prices'
+    | '/farmer/settings'
     | '/farmer/wallet'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -152,8 +172,10 @@ export interface FileRouteTypes {
     | '/farmer/dashboard'
     | '/farmer/finance'
     | '/farmer/listings'
+    | '/farmer/notifications'
     | '/farmer/orders'
     | '/farmer/prices'
+    | '/farmer/settings'
     | '/farmer/wallet'
   id:
     | '__root__'
@@ -166,8 +188,10 @@ export interface FileRouteTypes {
     | '/farmer/dashboard'
     | '/farmer/finance'
     | '/farmer/listings'
+    | '/farmer/notifications'
     | '/farmer/orders'
     | '/farmer/prices'
+    | '/farmer/settings'
     | '/farmer/wallet'
   fileRoutesById: FileRoutesById
 }
@@ -231,6 +255,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FarmerWalletRouteImport
       parentRoute: typeof FarmerRoute
     }
+    '/farmer/settings': {
+      id: '/farmer/settings'
+      path: '/settings'
+      fullPath: '/farmer/settings'
+      preLoaderRoute: typeof FarmerSettingsRouteImport
+      parentRoute: typeof FarmerRoute
+    }
     '/farmer/prices': {
       id: '/farmer/prices'
       path: '/prices'
@@ -243,6 +274,13 @@ declare module '@tanstack/react-router' {
       path: '/orders'
       fullPath: '/farmer/orders'
       preLoaderRoute: typeof FarmerOrdersRouteImport
+      parentRoute: typeof FarmerRoute
+    }
+    '/farmer/notifications': {
+      id: '/farmer/notifications'
+      path: '/notifications'
+      fullPath: '/farmer/notifications'
+      preLoaderRoute: typeof FarmerNotificationsRouteImport
       parentRoute: typeof FarmerRoute
     }
     '/farmer/listings': {
@@ -273,8 +311,10 @@ interface FarmerRouteChildren {
   FarmerDashboardRoute: typeof FarmerDashboardRoute
   FarmerFinanceRoute: typeof FarmerFinanceRoute
   FarmerListingsRoute: typeof FarmerListingsRoute
+  FarmerNotificationsRoute: typeof FarmerNotificationsRoute
   FarmerOrdersRoute: typeof FarmerOrdersRoute
   FarmerPricesRoute: typeof FarmerPricesRoute
+  FarmerSettingsRoute: typeof FarmerSettingsRoute
   FarmerWalletRoute: typeof FarmerWalletRoute
 }
 
@@ -282,8 +322,10 @@ const FarmerRouteChildren: FarmerRouteChildren = {
   FarmerDashboardRoute: FarmerDashboardRoute,
   FarmerFinanceRoute: FarmerFinanceRoute,
   FarmerListingsRoute: FarmerListingsRoute,
+  FarmerNotificationsRoute: FarmerNotificationsRoute,
   FarmerOrdersRoute: FarmerOrdersRoute,
   FarmerPricesRoute: FarmerPricesRoute,
+  FarmerSettingsRoute: FarmerSettingsRoute,
   FarmerWalletRoute: FarmerWalletRoute,
 }
 
