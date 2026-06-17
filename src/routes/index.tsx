@@ -168,28 +168,14 @@ function Landing() {
 
       {/* USSD */}
       <section className="bg-[#0F172A] text-white py-20">
-        <div className="mx-auto max-w-7xl px-6 grid md:grid-cols-2 gap-10 items-center">
-          <div>
-            <h2 className="font-display text-3xl md:text-4xl font-bold">No smartphone? No problem.</h2>
-            <p className="mt-4 text-white/70">
-              AgriLink works on any phone. Dial <span className="text-[#F9A825] font-semibold">*789#</span> to access prices, list produce, and apply for credit — no internet needed.
-            </p>
-            <Link to="/ussd" className="mt-6 inline-flex items-center gap-2 rounded-lg bg-[#2E7D32] px-5 py-2.5 text-sm font-medium hover:bg-[#256528]">
-              <Phone className="h-4 w-4" /> Try the USSD simulator
-            </Link>
-          </div>
-          <div className="flex justify-center">
-            <div className="w-56 h-96 rounded-3xl bg-slate-900 border-4 border-slate-700 p-3 shadow-2xl">
-              <div className="h-44 rounded-xl bg-[#0a2818] p-3 font-mono text-[10px] leading-tight text-[#4CAF50]">
-                AGRILINK *789#<br />─────────────<br />1. Check prices<br />2. List produce<br />3. My balance<br />4. Apply credit<br />5. Exit
-              </div>
-              <div className="mt-3 grid grid-cols-3 gap-1.5">
-                {["1","2","3","4","5","6","7","8","9","*","0","#"].map((k) => (
-                  <div key={k} className="aspect-square rounded-full bg-slate-700 flex items-center justify-center text-xs text-white">{k}</div>
-                ))}
-              </div>
-            </div>
-          </div>
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <h2 className="font-display text-3xl md:text-4xl font-bold">No smartphone? No problem.</h2>
+          <p className="mt-4 text-white/70">
+            AgriLink works on any phone. Dial <span className="text-[#F9A825] font-semibold">*789#</span> to access prices, list produce, and apply for credit — no internet needed.
+          </p>
+          <Link to="/ussd" className="mt-6 inline-flex items-center gap-2 rounded-lg bg-[#2E7D32] px-5 py-2.5 text-sm font-medium hover:bg-[#256528]">
+            <Phone className="h-4 w-4" /> Try the USSD simulator
+          </Link>
         </div>
       </section>
 
