@@ -1,5 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/signin")({
   head: () => ({ meta: [{ title: "Sign In — AgriLink Solutions" }] }),
@@ -7,8 +9,25 @@ export const Route = createFileRoute("/signin")({
 });
 
 function SignIn() {
-  const [mode, setMode] = useState<"email" | "phone">("phone");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError(null);
+    setSubmitting(true);
+    const f = new FormData(e.currentTarget);
+    const email = String(f.get("email") || "").trim();
+    const password = String(f.get("password") || "");
+    const { data, error: e1 } = await supabase.auth.signInWithPassword({ email, password });
+    if (e1 || !data.user) { setError(e1?.message ?? "Sign in failed"); setSubmitting(false); return; }
+    const { data: prof } = await supabase.from("profiles").select("role,verification_status").eq("id", data.user.id).maybeSingle();
+    setSubmitting(false);
+    if (!prof) { navigate({ to: "/verify", search: { role: "farmer" } }); return; }
+    if (prof.verification_status !== "verified") { navigate({ to: "/verify", search: { role: prof.role as "farmer" | "buyer" } }); return; }
+    navigate({ to: prof.role === "buyer" ? "/buyer/dashboard" : "/farmer/dashboard" });
+  }
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center px-4 py-12">
@@ -21,42 +40,17 @@ function SignIn() {
           <h1 className="mt-4 font-display text-2xl font-semibold">Welcome back</h1>
         </div>
 
-        <div className="flex rounded-lg bg-[#F1F5F9] p-1 mb-4">
-          {(["email", "phone"] as const).map((m) => (
-            <button
-              key={m}
-              onClick={() => setMode(m)}
-              className={`flex-1 rounded-md py-2 text-sm font-medium transition-colors ${mode === m ? "bg-white text-[#1E293B] shadow-sm" : "text-[#64748B]"}`}
-            >
-              {m === "email" ? "Email" : "Phone Number"}
-            </button>
-          ))}
-        </div>
-
-        <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); navigate({ to: "/farmer/dashboard" }); }}>
-          {mode === "email" ? (
-            <Field label="Email address"><input type="email" required className="input" placeholder="you@example.com" /></Field>
-          ) : (
-            <Field label="Phone number"><input type="tel" required className="input" placeholder="+233 XX XXX XXXX" /></Field>
-          )}
-          <div>
-            <Field label="Password"><input type="password" required className="input" /></Field>
-            <div className="text-right mt-1.5">
-              <a href="#" className="text-xs text-[#2E7D32] font-medium hover:underline">Forgot password?</a>
-            </div>
-          </div>
-          <button type="submit" className="w-full rounded-lg bg-[#2E7D32] px-4 py-3 text-sm font-medium text-white hover:bg-[#256528]">
-            Sign in
+        <form className="space-y-4" onSubmit={onSubmit}>
+          <Field label="Email address"><input name="email" type="email" required className="input" placeholder="you@example.com" /></Field>
+          <Field label="Password"><input name="password" type="password" required className="input" /></Field>
+          {error && <div className="rounded-lg bg-red-50 border border-red-200 p-3 text-sm text-red-700">{error}</div>}
+          <button type="submit" disabled={submitting} className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-[#2E7D32] px-4 py-3 text-sm font-medium text-white hover:bg-[#256528] disabled:opacity-60">
+            {submitting && <Loader2 className="h-4 w-4 animate-spin" />} Sign in
           </button>
           <p className="text-center text-sm text-[#64748B]">
             Don't have an account? <Link to="/signup" className="text-[#2E7D32] font-medium hover:underline">Create one</Link>
           </p>
         </form>
-
-        <div className="mt-6 pt-6 border-t border-[#E2E8F0] flex gap-2">
-          <Link to="/farmer/dashboard" className="flex-1 text-center text-xs rounded-md bg-[#F1F5F9] py-2 hover:bg-[#E2E8F0]">Preview Farmer →</Link>
-          <Link to="/buyer/dashboard" className="flex-1 text-center text-xs rounded-md bg-[#F1F5F9] py-2 hover:bg-[#E2E8F0]">Preview Buyer →</Link>
-        </div>
       </div>
       <style>{`
         .input { width: 100%; padding: 0.625rem 0.875rem; border: 1px solid #E2E8F0; border-radius: 0.5rem; background: white; font-size: 0.875rem; color: #1E293B; outline: none; }
