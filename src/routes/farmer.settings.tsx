@@ -18,7 +18,7 @@ function Settings() {
   const [error, setError] = useState<string | null>(null);
 
   const save = useMutation({
-    mutationFn: async (payload: Record<string, any>) => {
+    mutationFn: async (payload: { full_name: string; phone: string; email: string | null; region: string; cooperative_name: string }) => {
       if (!user) throw new Error("Not signed in");
       const { error } = await supabase.from("profiles").update(payload).eq("id", user.id);
       if (error) throw error;
