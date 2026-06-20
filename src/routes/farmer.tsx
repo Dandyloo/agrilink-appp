@@ -1,7 +1,10 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { AppSidebar, TopBar, useMobileNav } from "@/components/layout";
 import { FARMER_NAV } from "@/components/nav-items";
-import { FARMER } from "@/lib/seed";
+import { useAuth, initials } from "@/hooks/use-auth";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/farmer")({
   component: FarmerLayout,
@@ -9,19 +12,49 @@ export const Route = createFileRoute("/farmer")({
 
 function FarmerLayout() {
   const nav = useMobileNav();
+  const navigate = useNavigate();
+  const { user, profile, loading } = useAuth();
+
+  useEffect(() => {
+    if (loading) return;
+    if (!user) navigate({ to: "/signin" });
+    else if (profile && profile.role !== "farmer") navigate({ to: "/buyer/dashboard" });
+  }, [user, profile, loading, navigate]);
+
+  const { data: unread = 0 } = useQuery({
+    queryKey: ["unread-notifs", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { count } = await supabase
+        .from("notifications")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user!.id)
+        .eq("is_read", false);
+      return count ?? 0;
+    },
+    refetchInterval: 30000,
+  });
+
+  if (loading || !user || !profile) {
+    return <div className="flex min-h-screen items-center justify-center bg-[#F8FAFC] text-sm text-[#64748B]">Loading…</div>;
+  }
+
+  const badge = profile.verification_status === "verified" ? "Verified Farmer" : "Pending verification";
+
   return (
     <div className="flex min-h-screen w-full bg-[#F8FAFC]">
       <AppSidebar
         items={FARMER_NAV}
-        badge="Verified Farmer"
+        badge={badge}
         badgeKind="verified"
         mobileOpen={nav.open}
         onMobileClose={nav.closeMenu}
       />
       <div className="flex-1 flex flex-col min-w-0">
         <TopBar
-          greeting={`Good morning, ${FARMER.name.split(" ")[0]}`}
-          initials={FARMER.initials}
+          greeting={`Good morning, ${profile.full_name.split(" ")[0] || "Farmer"}`}
+          initials={initials(profile.full_name)}
+          unread={unread}
           onMenuClick={nav.openMenu}
         />
         <main className="flex-1 p-4 sm:p-6"><Outlet /></main>
