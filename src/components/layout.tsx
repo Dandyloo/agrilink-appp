@@ -1,6 +1,7 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { ShieldCheck, LogOut, Menu, X } from "lucide-react";
 import { useEffect, useState, type ComponentType } from "react";
+import { useAuth } from "@/hooks/use-auth";
 
 export type NavItem = {
   to: string;
@@ -20,6 +21,8 @@ function SidebarInner({
   onNavigate?: () => void;
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
   return (
     <div className="flex h-full flex-col bg-[#0F172A] text-white">
       <div className="px-6 pt-6 pb-4">
@@ -62,14 +65,17 @@ function SidebarInner({
       </nav>
 
       <div className="border-t border-white/10 p-3">
-        <Link
-          to="/"
-          onClick={onNavigate}
-          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-red-400 hover:bg-white/5"
+        <button
+          onClick={async () => {
+            onNavigate?.();
+            await signOut();
+            navigate({ to: "/" });
+          }}
+          className="w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-red-400 hover:bg-white/5"
         >
           <LogOut className="h-4 w-4" />
           Sign out
-        </Link>
+        </button>
       </div>
     </div>
   );
@@ -88,7 +94,6 @@ export function AppSidebar({
   mobileOpen?: boolean;
   onMobileClose?: () => void;
 }) {
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
     if (mobileOpen) {
       const prev = document.body.style.overflow;
@@ -99,19 +104,12 @@ export function AppSidebar({
 
   return (
     <>
-      {/* Desktop */}
       <aside className="hidden md:flex w-64 shrink-0 flex-col min-h-screen sticky top-0">
         <SidebarInner items={items} badge={badge} badgeKind={badgeKind} />
       </aside>
-
-      {/* Mobile drawer */}
       {mobileOpen && (
         <>
-          <div
-            className="fixed inset-0 z-40 bg-black/50 md:hidden"
-            onClick={onMobileClose}
-            aria-hidden
-          />
+          <div className="fixed inset-0 z-40 bg-black/50 md:hidden" onClick={onMobileClose} aria-hidden />
           <aside className="fixed inset-y-0 left-0 z-50 w-72 max-w-[85%] md:hidden shadow-2xl animate-in slide-in-from-left duration-200">
             <button
               onClick={onMobileClose}
@@ -131,10 +129,12 @@ export function AppSidebar({
 export function TopBar({
   greeting,
   initials,
+  unread = 0,
   onMenuClick,
 }: {
   greeting: string;
   initials: string;
+  unread?: number;
   onMenuClick?: () => void;
 }) {
   return (
@@ -154,7 +154,9 @@ export function TopBar({
       <div className="flex shrink-0 items-center gap-3 sm:gap-4">
         <Link to="/notifications" className="relative">
           <BellIcon />
-          <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">3</span>
+          {unread > 0 && (
+            <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">{unread}</span>
+          )}
         </Link>
         <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#2E7D32] text-sm font-semibold text-white">
           {initials}
@@ -195,4 +197,24 @@ export function useMobileNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   useEffect(() => { setOpen(false); }, [pathname]);
   return { open, setOpen, openMenu: () => setOpen(true), closeMenu: () => setOpen(false) };
+}
+
+export const ESCROW_LABEL: Record<string, string> = {
+  funds_held: "Funds Held",
+  ready_for_delivery: "Ready for Delivery",
+  in_transit: "In Transit",
+  delivered: "Delivered",
+  released_to_farmer: "Released to Farmer",
+};
+
+export function EscrowPill({ status }: { status: string }) {
+  const label = ESCROW_LABEL[status] ?? status;
+  const styles: Record<string, string> = {
+    funds_held: "bg-[#FFF8E1] text-[#7A5C0E]",
+    ready_for_delivery: "bg-[#DBEAFE] text-[#1E40AF]",
+    in_transit: "bg-[#FEF3C7] text-[#92400E]",
+    delivered: "bg-[#DCFCE7] text-[#166534]",
+    released_to_farmer: "bg-[#2E7D32] text-white",
+  };
+  return <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap ${styles[status] ?? "bg-slate-100"}`}>{label}</span>;
 }
