@@ -1,7 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ShieldCheck, CheckCircle2, Loader2 } from "lucide-react";
 import { z } from "zod";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/verify")({
   head: () => ({ meta: [{ title: "Verify Identity — AgriLink Solutions" }] }),
@@ -12,19 +14,37 @@ export const Route = createFileRoute("/verify")({
 type Phase = "form" | "pending" | "success";
 
 function Verify() {
-  const { role } = Route.useSearch();
+  const { role: roleSearch } = Route.useSearch();
+  const { user, profile, loading, refresh } = useAuth();
   const [phase, setPhase] = useState<Phase>("form");
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const role = roleSearch ?? profile?.role ?? "farmer";
 
-  function handleSubmit(e: React.FormEvent) {
+  useEffect(() => {
+    if (!loading && !user) navigate({ to: "/signin" });
+  }, [loading, user, navigate]);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!user) return;
+    setError(null);
     setPhase("pending");
+    const f = new FormData(e.currentTarget);
+    const id_type = String(f.get("id_type") || "Ghana Card");
+    const id_number = String(f.get("id_number") || "").trim();
+
+    const { error: e1 } = await supabase
+      .from("profiles")
+      .update({ id_type, id_number, verification_status: "verified" })
+      .eq("id", user.id);
+
+    if (e1) { setError(e1.message); setPhase("form"); return; }
+    await refresh();
+    setPhase("success");
     setTimeout(() => {
-      setPhase("success");
-      setTimeout(() => {
-        navigate({ to: role === "buyer" ? "/buyer/dashboard" : "/farmer/dashboard" });
-      }, 1200);
-    }, 2000);
+      navigate({ to: role === "buyer" ? "/buyer/dashboard" : "/farmer/dashboard" });
+    }, 1200);
   }
 
   return (
@@ -42,7 +62,7 @@ function Verify() {
             <form onSubmit={handleSubmit} className="mt-6 space-y-4 text-left">
               <label className="block">
                 <span className="block text-sm font-medium text-[#1E293B] mb-1.5">ID type</span>
-                <select required className="input">
+                <select name="id_type" required className="input">
                   <option>Ghana Card</option>
                   <option>Voter ID</option>
                   <option>NHIS Card</option>
@@ -51,8 +71,9 @@ function Verify() {
               </label>
               <label className="block">
                 <span className="block text-sm font-medium text-[#1E293B] mb-1.5">ID number</span>
-                <input required className="input" placeholder="Enter your ID number" />
+                <input name="id_number" required className="input" placeholder="Enter your ID number" />
               </label>
+              {error && <div className="rounded-lg bg-red-50 border border-red-200 p-3 text-sm text-red-700">{error}</div>}
               <button type="submit" className="w-full rounded-lg bg-[#2E7D32] px-4 py-3 text-sm font-medium text-white hover:bg-[#256528]">
                 Submit for verification
               </button>
@@ -65,9 +86,6 @@ function Verify() {
             <Loader2 className="h-12 w-12 text-[#2E7D32] mx-auto animate-spin" />
             <h2 className="mt-6 font-display text-xl font-semibold">Verifying your identity...</h2>
             <p className="mt-2 text-sm text-[#64748B]">This usually takes a few seconds</p>
-            <div className="mt-4 rounded-lg bg-[#FFF8E1] border border-[#F9A825]/30 p-3 text-xs text-[#7A5C0E]">
-              ⏳ Verification Pending
-            </div>
           </div>
         )}
 

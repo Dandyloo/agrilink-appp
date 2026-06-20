@@ -1,6 +1,10 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { BUYER, REGIONS } from "@/lib/seed";
+import { Loader2 } from "lucide-react";
+import { REGIONS } from "@/lib/seed";
+import { useAuth, initials } from "@/hooks/use-auth";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/buyer/settings")({
   head: () => ({ meta: [{ title: "Settings — AgriLink" }] }),
@@ -8,25 +12,62 @@ export const Route = createFileRoute("/buyer/settings")({
 });
 
 function Settings() {
+  const { user, profile, refresh } = useAuth();
+  const qc = useQueryClient();
+  const [done, setDone] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const save = useMutation({
+    mutationFn: async (payload: { full_name: string; phone: string; email: string | null; region: string }) => {
+      if (!user) throw new Error("Not signed in");
+      const { error } = await supabase.from("profiles").update(payload).eq("id", user.id);
+      if (error) throw error;
+      await refresh(); qc.invalidateQueries();
+    },
+  });
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError(null);
+    const f = new FormData(e.currentTarget);
+    try {
+      await save.mutateAsync({
+        full_name: String(f.get("full_name") || ""),
+        phone: String(f.get("phone") || ""),
+        email: String(f.get("email") || "") || null,
+        region: String(f.get("region") || ""),
+      });
+      setDone(true); setTimeout(() => setDone(false), 2500);
+    } catch (e: any) { setError(e.message); }
+  }
+
+  if (!profile) return null;
+
   return (
     <div className="space-y-6 max-w-3xl">
       <h1 className="font-display text-2xl font-semibold">Settings</h1>
 
       <Card title="Profile">
-        <div className="flex items-center gap-4 mb-5">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#2E7D32] text-xl font-semibold text-white">{BUYER.initials}</div>
-          <div>
-            <div className="font-display font-semibold">{BUYER.name}</div>
-            <div className="text-xs text-[#64748B]">{BUYER.subscription}</div>
+        <form onSubmit={onSubmit}>
+          <div className="flex items-center gap-4 mb-5">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#2E7D32] text-xl font-semibold text-white">{initials(profile.full_name)}</div>
+            <div>
+              <div className="font-display font-semibold">{profile.full_name}</div>
+              <div className="text-xs text-[#64748B] capitalize">Buyer · {profile.verification_status}</div>
+            </div>
           </div>
-        </div>
-        <div className="grid sm:grid-cols-2 gap-3">
-          <Field label="Full name"><input className="input" defaultValue={BUYER.name} /></Field>
-          <Field label="Phone"><input className="input" defaultValue={BUYER.phone} /></Field>
-          <Field label="Email"><input className="input" placeholder="optional" /></Field>
-          <Field label="Region"><select className="input">{REGIONS.map((r) => <option key={r}>{r}</option>)}</select></Field>
-        </div>
-        <button className="mt-4 rounded-lg bg-[#2E7D32] px-5 py-2.5 text-sm font-medium text-white">Save changes</button>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <Field label="Full name"><input name="full_name" required className="input" defaultValue={profile.full_name} /></Field>
+            <Field label="Phone"><input name="phone" className="input" defaultValue={profile.phone ?? ""} /></Field>
+            <Field label="Email"><input name="email" type="email" className="input" defaultValue={profile.email ?? ""} /></Field>
+            <Field label="Region"><select name="region" className="input" defaultValue={profile.region ?? ""}>{REGIONS.map((r) => <option key={r}>{r}</option>)}</select></Field>
+          </div>
+          {error && <div className="mt-3 text-xs text-red-600">{error}</div>}
+          {done && <div className="mt-3 text-xs text-[#2E7D32]">✓ Saved</div>}
+          <button disabled={save.isPending} className="mt-4 inline-flex items-center gap-2 rounded-lg bg-[#2E7D32] px-5 py-2.5 text-sm font-medium text-white disabled:opacity-60">
+            {save.isPending && <Loader2 className="h-4 w-4 animate-spin" />} Save changes
+          </button>
+        </form>
       </Card>
 
       <Card title="Notifications">
@@ -37,21 +78,6 @@ function Settings() {
           { label: "Marketing emails", on: false },
         ].map((t) => <Toggle key={t.label} {...t} />)}
       </Card>
-
-      <Card title="Security">
-        <div className="grid sm:grid-cols-3 gap-3">
-          <Field label="Current password"><input type="password" className="input" /></Field>
-          <Field label="New password"><input type="password" className="input" /></Field>
-          <Field label="Confirm new password"><input type="password" className="input" /></Field>
-        </div>
-        <button className="mt-3 rounded-lg bg-[#2E7D32] px-5 py-2.5 text-sm font-medium text-white">Update password</button>
-      </Card>
-
-      <div className="rounded-xl border border-red-200 bg-red-50 p-5">
-        <h3 className="font-display font-semibold text-red-700">Danger zone</h3>
-        <p className="text-sm text-red-600 mt-1">Signing out will end your current session</p>
-        <Link to="/" className="mt-4 inline-block rounded-lg border-2 border-red-500 px-5 py-2 text-sm font-medium text-red-600 hover:bg-red-100">Sign out</Link>
-      </div>
 
       <style>{`.input { width:100%; padding:0.5rem 0.75rem; border:1px solid #E2E8F0; border-radius:0.5rem; background:white; font-size:0.875rem; outline:none } .input:focus { border-color:#2E7D32 }`}</style>
     </div>
