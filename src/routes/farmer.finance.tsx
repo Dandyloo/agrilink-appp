@@ -1,6 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
 import { ghs } from "@/lib/seed";
+import { useAuth } from "@/hooks/use-auth";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/farmer/finance")({
   head: () => ({ meta: [{ title: "Finance Hub — AgriLink" }] }),
@@ -9,7 +13,6 @@ export const Route = createFileRoute("/farmer/finance")({
 
 function FinanceHub() {
   const [tab, setTab] = useState<"input" | "invoice" | "insurance">("input");
-
   return (
     <div className="space-y-6">
       <div>
@@ -34,64 +37,75 @@ function FinanceHub() {
       {tab === "input" && <InputCredit />}
       {tab === "invoice" && <InvoiceFinance />}
       {tab === "insurance" && <Insurance />}
+
+      <PastApplications />
     </div>
   );
 }
 
+function useSubmitApplication() {
+  const { user } = useAuth();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: { type: "input_credit" | "invoice_financing" | "insurance"; amount: number; crop_type?: string }) => {
+      if (!user) throw new Error("Not signed in");
+      const { error } = await supabase.from("credit_applications").insert({ ...payload, farmer_id: user.id, status: "submitted" });
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["credit-apps"] }),
+  });
+}
+
 function InputCredit() {
+  const m = useSubmitApplication();
+  const [done, setDone] = useState(false);
+  async function submit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const f = new FormData(e.currentTarget);
+    await m.mutateAsync({ type: "input_credit", amount: Number(f.get("amount") || 0), crop_type: String(f.get("crop") || "") });
+    setDone(true); setTimeout(() => setDone(false), 3000);
+    (e.target as HTMLFormElement).reset();
+  }
   return (
     <div className="space-y-5">
       <div className="rounded-xl border border-[#E2E8F0] bg-white p-5">
         <p className="text-sm text-[#1E293B]">Get seeds, fertilizer and farm inputs now. Repay at harvest.</p>
       </div>
-
-      <div className="rounded-xl border border-[#E2E8F0] bg-white p-5 space-y-4">
+      <form onSubmit={submit} className="rounded-xl border border-[#E2E8F0] bg-white p-5 space-y-4">
         <h3 className="font-display font-semibold">Apply for input credit</h3>
         <div className="grid sm:grid-cols-2 gap-3 text-sm">
-          <Field label="Crop type"><select className="input"><option>Maize</option><option>Tomatoes</option><option>Yam</option><option>Cocoa</option></select></Field>
-          <Field label="Amount needed (GHS)"><input type="number" className="input" placeholder="1200" /></Field>
+          <Field label="Crop type"><select name="crop" className="input"><option>Maize</option><option>Tomatoes</option><option>Yam</option><option>Cocoa</option></select></Field>
+          <Field label="Amount needed (GHS)"><input name="amount" type="number" required min={1} className="input" placeholder="1200" /></Field>
         </div>
         <label className="flex items-center gap-2 text-sm"><input type="checkbox" defaultChecked /> My cooperative will guarantee this loan</label>
         <label className="flex items-center gap-2 text-sm"><input type="checkbox" defaultChecked /> Repay at harvest</label>
-        <button className="rounded-lg bg-[#2E7D32] px-5 py-2.5 text-sm font-medium text-white hover:bg-[#256528]">Submit application</button>
-      </div>
-
-      <div className="rounded-xl border border-[#E2E8F0] bg-white p-5">
-        <h3 className="font-display font-semibold mb-4">Application status</h3>
-        <Stepper steps={["Submitted", "Under Review", "Approved", "Disbursed"]} active={2} />
-      </div>
-
-      <div className="rounded-xl border border-[#E2E8F0] bg-white p-5">
-        <h3 className="font-display font-semibold mb-3">Past applications</h3>
-        <div className="space-y-2 text-sm">
-          {[
-            { date: "10 May 2026", amount: 1200, crop: "Maize", status: "Disbursed" },
-            { date: "3 Mar 2026", amount: 800, crop: "Tomatoes", status: "Repaid" },
-          ].map((p) => (
-            <div key={p.date} className="flex items-center justify-between rounded-lg border border-[#E2E8F0] p-3">
-              <div>
-                <div className="font-medium">{p.crop} · {ghs(p.amount)}</div>
-                <div className="text-xs text-[#64748B]">{p.date}</div>
-              </div>
-              <span className="text-xs rounded-full px-2 py-0.5 bg-[#DCFCE7] text-[#166534] font-medium">{p.status}</span>
-            </div>
-          ))}
-        </div>
-      </div>
+        {m.error && <div className="text-xs text-red-600">{(m.error as Error).message}</div>}
+        {done && <div className="text-xs text-[#2E7D32]">✓ Application submitted</div>}
+        <button type="submit" disabled={m.isPending} className="inline-flex items-center gap-2 rounded-lg bg-[#2E7D32] px-5 py-2.5 text-sm font-medium text-white hover:bg-[#256528] disabled:opacity-60">
+          {m.isPending && <Loader2 className="h-4 w-4 animate-spin" />} Submit application
+        </button>
+      </form>
     </div>
   );
 }
 
 function InvoiceFinance() {
+  const m = useSubmitApplication();
   const [amt, setAmt] = useState(5000);
+  const [done, setDone] = useState(false);
+  async function submit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    await m.mutateAsync({ type: "invoice_financing", amount: amt });
+    setDone(true); setTimeout(() => setDone(false), 3000);
+  }
   return (
     <div className="space-y-5">
       <div className="rounded-xl border border-[#E2E8F0] bg-white p-5">
         <p className="text-sm">Sell your invoice to us. Get <strong>80% upfront</strong>, 20% on delivery.</p>
       </div>
-      <div className="rounded-xl border border-[#E2E8F0] bg-white p-5 space-y-4">
+      <form onSubmit={submit} className="rounded-xl border border-[#E2E8F0] bg-white p-5 space-y-4">
         <h3 className="font-display font-semibold">Invoice details</h3>
-        <Field label="Invoice amount (GHS)"><input type="number" className="input" value={amt} onChange={(e) => setAmt(Number(e.target.value) || 0)} /></Field>
+        <Field label="Invoice amount (GHS)"><input type="number" required className="input" value={amt} onChange={(e) => setAmt(Number(e.target.value) || 0)} /></Field>
         <div className="rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] p-4">
           <div className="text-xs text-[#64748B]">You receive within 24 hours</div>
           <div className="font-display text-2xl font-bold text-[#F9A825] mt-1">{ghs(amt * 0.8)}</div>
@@ -99,19 +113,25 @@ function InvoiceFinance() {
         <Field label="Expected delivery date"><input type="date" className="input" /></Field>
         <Field label="Buyer name"><input className="input" placeholder="e.g. Greenfield Foods" /></Field>
         <p className="text-xs text-[#64748B]">AgriLink retains 5% commission on the remaining 20%</p>
-        <button className="rounded-lg bg-[#2E7D32] px-5 py-2.5 text-sm font-medium text-white">Submit invoice</button>
-      </div>
+        {done && <div className="text-xs text-[#2E7D32]">✓ Invoice submitted</div>}
+        <button type="submit" disabled={m.isPending} className="inline-flex items-center gap-2 rounded-lg bg-[#2E7D32] px-5 py-2.5 text-sm font-medium text-white disabled:opacity-60">
+          {m.isPending && <Loader2 className="h-4 w-4 animate-spin" />} Submit invoice
+        </button>
+      </form>
     </div>
   );
 }
 
 function Insurance() {
+  const m = useSubmitApplication();
   const [selected, setSelected] = useState("standard");
+  const [done, setDone] = useState(false);
   const plans = [
     { id: "basic", name: "Basic", price: 50, desc: "Covers weather damage" },
     { id: "standard", name: "Standard", price: 120, desc: "Covers weather + pests + 10% price drop" },
     { id: "premium", name: "Premium", price: 250, desc: "Full coverage + crop loss guarantee" },
   ];
+  const plan = plans.find((p) => p.id === selected)!;
   return (
     <div className="space-y-5">
       <div className="rounded-xl border border-[#E2E8F0] bg-white p-5">
@@ -126,21 +146,40 @@ function Insurance() {
           </button>
         ))}
       </div>
-      <button className="rounded-lg bg-[#2E7D32] px-5 py-2.5 text-sm font-medium text-white">Apply for insurance</button>
+      {done && <div className="text-xs text-[#2E7D32]">✓ Insurance application submitted</div>}
+      <button onClick={async () => { await m.mutateAsync({ type: "insurance", amount: plan.price, crop_type: plan.name }); setDone(true); setTimeout(() => setDone(false), 3000); }} disabled={m.isPending} className="inline-flex items-center gap-2 rounded-lg bg-[#2E7D32] px-5 py-2.5 text-sm font-medium text-white disabled:opacity-60">
+        {m.isPending && <Loader2 className="h-4 w-4 animate-spin" />} Apply for insurance
+      </button>
     </div>
   );
 }
 
-function Stepper({ steps, active }: { steps: string[]; active: number }) {
+function PastApplications() {
+  const { user } = useAuth();
+  const { data: apps = [] } = useQuery({
+    queryKey: ["credit-apps", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data } = await supabase.from("credit_applications").select("*").eq("farmer_id", user!.id).order("created_at", { ascending: false });
+      return data ?? [];
+    },
+  });
+  if (apps.length === 0) return null;
+  const labels: Record<string, string> = { input_credit: "Input Credit", invoice_financing: "Invoice Financing", insurance: "Insurance" };
   return (
-    <div className="flex items-center gap-2">
-      {steps.map((s, i) => (
-        <div key={s} className="flex-1 flex items-center gap-2">
-          <div className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold ${i <= active ? "bg-[#2E7D32] text-white" : "bg-slate-100 text-slate-400"}`}>{i + 1}</div>
-          <span className={`text-xs flex-1 ${i <= active ? "text-[#1E293B] font-medium" : "text-[#64748B]"}`}>{s}</span>
-          {i < steps.length - 1 && <div className={`flex-1 h-0.5 ${i < active ? "bg-[#2E7D32]" : "bg-slate-200"}`} />}
-        </div>
-      ))}
+    <div className="rounded-xl border border-[#E2E8F0] bg-white p-5">
+      <h3 className="font-display font-semibold mb-3">Past applications</h3>
+      <div className="space-y-2 text-sm">
+        {apps.map((p) => (
+          <div key={p.id} className="flex items-center justify-between rounded-lg border border-[#E2E8F0] p-3">
+            <div>
+              <div className="font-medium">{labels[p.type]} · {ghs(Number(p.amount))}</div>
+              <div className="text-xs text-[#64748B]">{p.crop_type ?? ""} · {new Date(p.created_at).toLocaleDateString()}</div>
+            </div>
+            <span className="text-xs rounded-full px-2 py-0.5 bg-[#FFF8E1] text-[#7A5C0E] font-medium capitalize">{p.status}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
