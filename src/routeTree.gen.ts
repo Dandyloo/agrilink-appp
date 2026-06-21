@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyRouteImport } from './routes/verify'
-import { Route as UssdRouteImport } from './routes/ussd'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as NotificationsRouteImport } from './routes/notifications'
@@ -35,11 +34,6 @@ import { Route as BuyerAnalyticsRouteImport } from './routes/buyer.analytics'
 const VerifyRoute = VerifyRouteImport.update({
   id: '/verify',
   path: '/verify',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const UssdRoute = UssdRouteImport.update({
-  id: '/ussd',
-  path: '/ussd',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
@@ -150,7 +144,6 @@ export interface FileRoutesByFullPath {
   '/notifications': typeof NotificationsRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/ussd': typeof UssdRoute
   '/verify': typeof VerifyRoute
   '/buyer/analytics': typeof BuyerAnalyticsRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
@@ -174,7 +167,6 @@ export interface FileRoutesByTo {
   '/notifications': typeof NotificationsRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/ussd': typeof UssdRoute
   '/verify': typeof VerifyRoute
   '/buyer/analytics': typeof BuyerAnalyticsRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
@@ -199,7 +191,6 @@ export interface FileRoutesById {
   '/notifications': typeof NotificationsRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/ussd': typeof UssdRoute
   '/verify': typeof VerifyRoute
   '/buyer/analytics': typeof BuyerAnalyticsRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
@@ -225,7 +216,6 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/signin'
     | '/signup'
-    | '/ussd'
     | '/verify'
     | '/buyer/analytics'
     | '/buyer/dashboard'
@@ -249,7 +239,6 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/signin'
     | '/signup'
-    | '/ussd'
     | '/verify'
     | '/buyer/analytics'
     | '/buyer/dashboard'
@@ -273,7 +262,6 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/signin'
     | '/signup'
-    | '/ussd'
     | '/verify'
     | '/buyer/analytics'
     | '/buyer/dashboard'
@@ -298,7 +286,6 @@ export interface RootRouteChildren {
   NotificationsRoute: typeof NotificationsRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
-  UssdRoute: typeof UssdRoute
   VerifyRoute: typeof VerifyRoute
 }
 
@@ -309,13 +296,6 @@ declare module '@tanstack/react-router' {
       path: '/verify'
       fullPath: '/verify'
       preLoaderRoute: typeof VerifyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ussd': {
-      id: '/ussd'
-      path: '/ussd'
-      fullPath: '/ussd'
-      preLoaderRoute: typeof UssdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -513,19 +493,8 @@ const rootRouteChildren: RootRouteChildren = {
   NotificationsRoute: NotificationsRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
-  UssdRoute: UssdRoute,
   VerifyRoute: VerifyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
