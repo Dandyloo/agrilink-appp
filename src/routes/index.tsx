@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Leaf, Store, ShieldCheck, Banknote, TrendingDown, ArrowRight, Phone } from "lucide-react";
+import { Leaf, Store, ShieldCheck, Banknote, TrendingDown } from "lucide-react";
+import heroImg from "@/assets/hero-farmer-ghana.jpg";
 
 export const Route = createFileRoute("/")({
   component: Landing,
@@ -20,10 +21,13 @@ function Landing() {
       {/* HERO */}
       <section className="relative overflow-hidden bg-[#0F172A] text-white">
         <img
-          src="https://images.unsplash.com/photo-1589923188900-85dae523342b?w=1600"
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover opacity-30"
+          src={heroImg}
+          alt="Ghanaian farmer in a maize field at golden hour"
+          width={1600}
+          height={900}
+          className="absolute inset-0 h-full w-full object-cover opacity-40"
         />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0F172A] via-[#0F172A]/70 to-transparent" />
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 pt-6">
           <nav className="flex items-center justify-between">
             <Logo light />
@@ -42,24 +46,15 @@ function Landing() {
             <h1 className="font-display text-3xl sm:text-4xl md:text-6xl font-bold leading-tight">
               Connecting Farmers.<br />Financing Growth.
             </h1>
-            <p className="mt-5 sm:mt-6 max-w-2xl text-base sm:text-lg text-white/70">
+            <p className="mt-5 sm:mt-6 max-w-2xl text-base sm:text-lg text-white/80">
               Ghana's first Agri-Fintech marketplace — fair prices, secure payments, instant financing.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row flex-wrap gap-3">
-              <Link to="/signup" className="inline-flex items-center justify-center rounded-lg bg-[#2E7D32] px-6 py-3 text-sm font-medium text-white hover:bg-[#256528]">
+              <Link to="/signup" className="inline-flex min-h-[48px] items-center justify-center rounded-lg bg-[#2E7D32] px-6 py-3 text-sm font-medium text-white hover:bg-[#256528]">
                 Join as Farmer
               </Link>
-              <Link to="/signup" className="inline-flex items-center justify-center rounded-lg border-2 border-white bg-transparent px-6 py-3 text-sm font-medium text-white hover:bg-white hover:text-[#0F172A]">
+              <Link to="/signup" className="inline-flex min-h-[48px] items-center justify-center rounded-lg border-2 border-white bg-transparent px-6 py-3 text-sm font-medium text-white hover:bg-white hover:text-[#0F172A]">
                 Join as Buyer
-              </Link>
-            </div>
-
-            <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row flex-wrap gap-3">
-              <Link to="/farmer/dashboard" className="inline-flex items-center justify-center gap-2 rounded-lg bg-white/10 backdrop-blur px-5 py-2.5 text-sm font-medium text-white hover:bg-white/20 border border-white/20">
-                Preview as Farmer <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link to="/buyer/dashboard" className="inline-flex items-center justify-center gap-2 rounded-lg bg-white/10 backdrop-blur px-5 py-2.5 text-sm font-medium text-white hover:bg-white/20 border border-white/20">
-                Preview as Buyer <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </div>
@@ -67,15 +62,15 @@ function Landing() {
       </section>
 
       {/* TWO TOOLS */}
-      <section id="tools" className="bg-white py-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <h2 className="font-display text-3xl md:text-4xl font-bold text-center text-[#1E293B]">Two powerful tools in one platform</h2>
-          <div className="mt-12 grid md:grid-cols-2 gap-6">
-            <div className="rounded-xl border border-[#E2E8F0] bg-white p-8">
+      <section id="tools" className="bg-white py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-center text-[#1E293B]">Two powerful tools in one platform</h2>
+          <div className="mt-10 sm:mt-12 grid md:grid-cols-2 gap-5 sm:gap-6">
+            <div className="rounded-xl border border-[#E2E8F0] bg-white p-6 sm:p-8">
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#E8F5E9]">
                 <Store className="h-6 w-6 text-[#2E7D32]" />
               </div>
-              <h3 className="mt-4 font-display text-2xl font-semibold">AgriLink Market</h3>
+              <h3 className="mt-4 font-display text-xl sm:text-2xl font-semibold">AgriLink Market</h3>
               <p className="mt-2 text-sm text-[#64748B]">Buy and sell produce directly across Ghana.</p>
               <ul className="mt-6 space-y-3 text-sm text-[#1E293B]">
                 <li className="flex gap-2"><span className="text-[#2E7D32]">✓</span> Direct farmer-to-buyer listings, no middlemen</li>
@@ -85,11 +80,11 @@ function Landing() {
               </ul>
             </div>
 
-            <div className="rounded-xl border border-[#E2E8F0] bg-white p-8">
+            <div className="rounded-xl border border-[#E2E8F0] bg-white p-6 sm:p-8">
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#E8F5E9]">
                 <Banknote className="h-6 w-6 text-[#2E7D32]" />
               </div>
-              <h3 className="mt-4 font-display text-2xl font-semibold">AgriLink Finance</h3>
+              <h3 className="mt-4 font-display text-xl sm:text-2xl font-semibold">AgriLink Finance</h3>
               <p className="mt-2 text-sm text-[#64748B]">Credit, invoice financing and insurance built for farmers.</p>
               <ul className="mt-6 space-y-3 text-sm text-[#1E293B]">
                 <li className="flex gap-2"><span className="text-[#2E7D32]">✓</span> Input credit — seeds and fertilizer now, repay at harvest</li>
@@ -103,20 +98,20 @@ function Landing() {
       </section>
 
       {/* PROBLEM */}
-      <section className="bg-[#F8FAFC] py-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <h2 className="font-display text-3xl md:text-4xl font-bold text-center text-[#1E293B]">The problem we solve</h2>
-          <div className="mt-12 grid md:grid-cols-3 gap-6">
+      <section className="bg-[#F8FAFC] py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-center text-[#1E293B]">The problem we solve</h2>
+          <div className="mt-10 sm:mt-12 grid sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6">
             {[
               { icon: TrendingDown, title: "Market Access Gap", desc: "Farmers sell 30–50% below market value due to middlemen." },
               { icon: Banknote, title: "Financial Exclusion", desc: "6M+ farming households across Ghana without access to credit." },
               { icon: ShieldCheck, title: "Supply Chain Loss", desc: "$200M+ in post-harvest losses every year." },
             ].map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="rounded-xl border border-[#E2E8F0] bg-white p-8">
+              <div key={title} className="rounded-xl border border-[#E2E8F0] bg-white p-6 sm:p-8">
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#E8F5E9]">
                   <Icon className="h-6 w-6 text-[#2E7D32]" />
                 </div>
-                <h3 className="mt-4 font-display text-xl font-semibold">{title}</h3>
+                <h3 className="mt-4 font-display text-lg sm:text-xl font-semibold">{title}</h3>
                 <p className="mt-2 text-sm text-[#64748B]">{desc}</p>
               </div>
             ))}
@@ -125,8 +120,8 @@ function Landing() {
       </section>
 
       {/* STATS */}
-      <section className="bg-white py-20">
-        <div className="mx-auto max-w-7xl px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <section className="bg-white py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 text-center">
           {[
             { v: "4.5M", l: "Smallholder farmers in Ghana" },
             { v: "GHS 7.2M", l: "Year 1 GMV target" },
@@ -134,23 +129,23 @@ function Landing() {
             { v: "GHS 480K", l: "Year 1 revenue target" },
           ].map((s) => (
             <div key={s.l}>
-              <div className="font-display text-4xl md:text-5xl font-bold text-[#2E7D32]">{s.v}</div>
-              <div className="mt-2 text-sm text-[#64748B]">{s.l}</div>
+              <div className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-[#2E7D32]">{s.v}</div>
+              <div className="mt-2 text-xs sm:text-sm text-[#64748B]">{s.l}</div>
             </div>
           ))}
         </div>
       </section>
 
       {/* HOW */}
-      <section id="how" className="bg-[#F8FAFC] py-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <h2 className="font-display text-3xl md:text-4xl font-bold text-center text-[#1E293B]">How it works</h2>
-          <div className="mt-12 grid md:grid-cols-2 gap-8">
+      <section id="how" className="bg-[#F8FAFC] py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-center text-[#1E293B]">How it works</h2>
+          <div className="mt-10 sm:mt-12 grid md:grid-cols-2 gap-6 sm:gap-8">
             {[
               { title: "For Farmers", steps: ["List your produce in seconds", "Get paid securely via MoMo", "Apply for input credit instantly"] },
               { title: "For Buyers", steps: ["Browse verified farmer listings", "Pay into escrow", "Confirm delivery, funds release"] },
             ].map((g) => (
-              <div key={g.title} className="rounded-xl border border-[#E2E8F0] bg-white p-8">
+              <div key={g.title} className="rounded-xl border border-[#E2E8F0] bg-white p-6 sm:p-8">
                 <h3 className="font-display text-xl font-semibold text-[#2E7D32]">{g.title}</h3>
                 <ol className="mt-6 space-y-4">
                   {g.steps.map((s, i) => (
@@ -163,24 +158,16 @@ function Landing() {
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* USSD */}
-      <section className="bg-[#0F172A] text-white py-20">
-        <div className="mx-auto max-w-3xl px-6 text-center">
-          <h2 className="font-display text-3xl md:text-4xl font-bold">No smartphone? No problem.</h2>
-          <p className="mt-4 text-white/70">
-            AgriLink works on any phone. Dial <span className="text-[#F9A825] font-semibold">*789#</span> to access prices, list produce, and apply for credit — no internet needed.
-          </p>
-          <Link to="/ussd" className="mt-6 inline-flex items-center gap-2 rounded-lg bg-[#2E7D32] px-5 py-2.5 text-sm font-medium hover:bg-[#256528]">
-            <Phone className="h-4 w-4" /> Try the USSD simulator
-          </Link>
+          <div className="mt-10 text-center">
+            <Link to="/signup" className="inline-flex min-h-[48px] items-center justify-center rounded-lg bg-[#2E7D32] px-6 py-3 text-sm font-medium text-white hover:bg-[#256528]">
+              Get started — it's free
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-white border-t border-[#E2E8F0] py-12">
+      <footer className="bg-white border-t border-[#E2E8F0] py-10 sm:py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           <div>
             <Logo />
@@ -189,22 +176,23 @@ function Landing() {
           <div>
             <h4 className="font-display font-semibold text-[#1E293B]">Contact</h4>
             <p className="mt-2 text-sm text-[#64748B]">agrilink@gmail.com</p>
-            <p className="text-sm text-[#64748B]">+233 XX XXX XXXX</p>
+            <p className="text-sm text-[#64748B]">
+              <a href="tel:+233532672380" className="hover:text-[#2E7D32]">+233 53 267 2380</a>
+            </p>
           </div>
           <div>
-            <h4 className="font-display font-semibold text-[#1E293B]">Try it now</h4>
+            <h4 className="font-display font-semibold text-[#1E293B]">Get started</h4>
             <div className="mt-2 flex flex-wrap gap-2">
-              <Link to="/farmer/dashboard" className="inline-flex items-center gap-1.5 rounded-lg bg-[#2E7D32] px-4 py-2 text-xs font-medium text-white">
-                Preview as Farmer <ArrowRight className="h-3 w-3" />
+              <Link to="/signup" className="inline-flex items-center gap-1.5 rounded-lg bg-[#2E7D32] px-4 py-2 text-xs font-medium text-white">
+                Create account
               </Link>
-              <Link to="/buyer/dashboard" className="inline-flex items-center gap-1.5 rounded-lg border-2 border-[#2E7D32] bg-transparent px-4 py-2 text-xs font-medium text-[#2E7D32]">
-                Preview as Buyer <ArrowRight className="h-3 w-3" />
+              <Link to="/signin" className="inline-flex items-center gap-1.5 rounded-lg border-2 border-[#2E7D32] bg-transparent px-4 py-2 text-xs font-medium text-[#2E7D32]">
+                Sign in
               </Link>
             </div>
-            <Link to="/ussd" className="mt-3 inline-block text-xs text-[#2E7D32] hover:underline">USSD simulator →</Link>
           </div>
         </div>
-        <div className="mx-auto max-w-7xl px-6 mt-8 pt-6 border-t border-[#E2E8F0] text-xs text-[#64748B] text-center">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 mt-8 pt-6 border-t border-[#E2E8F0] text-xs text-[#64748B] text-center">
           © 2026 AgriLink Solutions · Built for Ghana 🇬🇭
         </div>
       </footer>
