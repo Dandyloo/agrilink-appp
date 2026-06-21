@@ -5,6 +5,7 @@ import { FARMER_NAV } from "@/components/nav-items";
 import { useAuth, initials } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { timeGreeting } from "@/lib/crop-images";
 
 export const Route = createFileRoute("/farmer")({
   component: FarmerLayout,
@@ -52,7 +53,7 @@ function FarmerLayout() {
       />
       <div className="flex-1 flex flex-col min-w-0">
         <TopBar
-          greeting={`Good morning, ${profile.full_name.split(" ")[0] || "Farmer"}`}
+          greeting={timeGreeting(profile.full_name, "Farmer")}
           initials={initials(profile.full_name)}
           unread={unread}
           onMenuClick={nav.openMenu}

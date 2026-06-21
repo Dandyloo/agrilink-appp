@@ -55,13 +55,15 @@ export const BUYER_ORDERS: Order[] = [
   { id: "AG-203", crop: "Cassava", buyer: "Ama Buyer", farmer: "Akosua Frimpong", region: "Eastern", qty: 300, value: 960, escrow: "Released to Farmer", date: "2026-06-02", image: LISTINGS[5].image },
 ];
 
+import { imageForCrop } from "./crop-images";
+
 export const COMMODITY_PRICES = [
-  { crop: "Maize", price: 4.5, change: 2.3, region: "Brong-Ahafo", image: LISTINGS[0].image, trend: [3.8, 4.0, 4.1, 4.0, 4.2, 4.3, 4.5] },
-  { crop: "Tomatoes", price: 12.0, change: -1.1, region: "Ashanti", image: LISTINGS[1].image, trend: [12.5, 12.4, 12.3, 12.2, 12.1, 12.1, 12.0] },
-  { crop: "Yam", price: 8.0, change: 0.5, region: "Volta", image: LISTINGS[2].image, trend: [7.7, 7.8, 7.9, 7.9, 7.9, 8.0, 8.0] },
-  { crop: "Plantain", price: 6.5, change: 3.2, region: "Central", image: LISTINGS[3].image, trend: [5.9, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5] },
-  { crop: "Cocoa", price: 45.0, change: -0.8, region: "Western", image: LISTINGS[4].image, trend: [45.8, 45.6, 45.4, 45.3, 45.2, 45.1, 45.0] },
-  { crop: "Cassava", price: 3.2, change: 1.7, region: "Eastern", image: LISTINGS[5].image, trend: [2.9, 3.0, 3.0, 3.1, 3.1, 3.15, 3.2] },
+  { crop: "Maize", price: 4.5, change: 2.3, region: "Brong-Ahafo", image: imageForCrop("Maize"), trend: [3.8, 4.0, 4.1, 4.0, 4.2, 4.3, 4.5] },
+  { crop: "Tomatoes", price: 12.0, change: -1.1, region: "Ashanti", image: imageForCrop("Tomatoes"), trend: [12.5, 12.4, 12.3, 12.2, 12.1, 12.1, 12.0] },
+  { crop: "Yam", price: 8.0, change: 0.5, region: "Volta", image: imageForCrop("Yam"), trend: [7.7, 7.8, 7.9, 7.9, 7.9, 8.0, 8.0] },
+  { crop: "Plantain", price: 6.5, change: 3.2, region: "Central", image: imageForCrop("Plantain"), trend: [5.9, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5] },
+  { crop: "Cocoa", price: 45.0, change: -0.8, region: "Western", image: imageForCrop("Cocoa"), trend: [45.8, 45.6, 45.4, 45.3, 45.2, 45.1, 45.0] },
+  { crop: "Cassava", price: 3.2, change: 1.7, region: "Eastern", image: imageForCrop("Cassava"), trend: [2.9, 3.0, 3.0, 3.1, 3.1, 3.15, 3.2] },
 ];
 
 export const TICKER = "Live prices: Maize GHS 4.50/kg ↑2.3%  ·  Tomatoes GHS 12.00/kg ↓1.1%  ·  Yam GHS 8.00/kg ↑0.5%  ·  Plantain GHS 6.50/kg ↑3.2%  ·  Cocoa GHS 45.00/kg ↓0.8%  ·  Cassava GHS 3.20/kg ↑1.7%";

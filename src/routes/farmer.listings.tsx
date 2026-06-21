@@ -5,6 +5,7 @@ import { REGIONS, CROP_TYPES, ghs } from "@/lib/seed";
 import { useAuth } from "@/hooks/use-auth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { imageForCrop, CURATED_CROPS } from "@/lib/crop-images";
 
 export const Route = createFileRoute("/farmer/listings")({
   head: () => ({ meta: [{ title: "My Listings — AgriLink" }] }),
@@ -115,22 +116,26 @@ function MyListings() {
 function ListingModal({ farmerId, initial, onClose, onSaved }: { farmerId: string; initial: Row | null; onClose: () => void; onSaved: () => void }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [crop, setCrop] = useState(initial?.crop ?? "");
+  const previewImg = imageForCrop(crop);
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
     setSaving(true);
     const f = new FormData(e.currentTarget);
+    const cropName = String(f.get("crop") || "");
+    const userImg = String(f.get("image") || "").trim();
     const payload = {
       farmer_id: farmerId,
-      crop: String(f.get("crop") || ""),
+      crop: cropName,
       region: String(f.get("region") || ""),
       price_per_kg: Number(f.get("price") || 0),
       quantity_kg: Number(f.get("qty") || 0),
       availability_date: String(f.get("available") || "") || null,
       cold_storage: f.get("cold") === "on",
       description: String(f.get("desc") || ""),
-      image_url: String(f.get("image") || "") || DEFAULT_IMG,
+      image_url: userImg || imageForCrop(cropName),
       status: "active" as const,
     };
     const res = initial
@@ -143,13 +148,20 @@ function ListingModal({ farmerId, initial, onClose, onSaved }: { farmerId: strin
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50" onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-lg bg-white rounded-2xl border border-[#E2E8F0] p-6 max-h-[90vh] overflow-y-auto">
+      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-lg bg-white rounded-2xl border border-[#E2E8F0] p-5 sm:p-6 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-display text-xl font-semibold">{initial ? "Edit listing" : "Create listing"}</h2>
-          <button onClick={onClose} className="text-[#64748B] hover:text-[#1E293B]"><X className="h-5 w-5" /></button>
+          <button onClick={onClose} className="text-[#64748B] hover:text-[#1E293B] p-1"><X className="h-5 w-5" /></button>
+        </div>
+        <div className="mb-4 rounded-lg overflow-hidden border border-[#E2E8F0]">
+          <img src={previewImg} alt={crop || "produce"} className="w-full h-32 object-cover" />
+          <div className="px-3 py-1.5 text-xs text-[#64748B] bg-[#F8FAFC]">Auto-matched photo for "{crop || "your crop"}"</div>
         </div>
         <form onSubmit={submit} className="space-y-3 text-sm">
-          <Field label="Crop name"><input name="crop" required defaultValue={initial?.crop} className="input" /></Field>
+          <Field label="Crop name">
+            <input name="crop" required defaultValue={initial?.crop} list="curated-crops" onChange={(e) => setCrop(e.currentTarget.value)} className="input" placeholder="Start typing…" />
+            <datalist id="curated-crops">{CURATED_CROPS.map((c) => <option key={c} value={c} />)}</datalist>
+          </Field>
           <Field label="Crop type">
             <select name="cropType" className="input">{CROP_TYPES.map((c) => <option key={c}>{c}</option>)}</select>
           </Field>
@@ -165,13 +177,13 @@ function ListingModal({ farmerId, initial, onClose, onSaved }: { farmerId: strin
           <label className="flex items-center gap-2">
             <input type="checkbox" name="cold" defaultChecked={initial?.cold_storage} /> <span>Cold storage required</span>
           </label>
-          <Field label="Produce photo URL"><input name="image" defaultValue={initial?.image_url ?? ""} className="input" placeholder="https://..." /></Field>
+          <Field label="Custom photo URL (optional)"><input name="image" defaultValue={initial?.image_url ?? ""} className="input" placeholder="Leave blank to use auto-matched photo" /></Field>
           {error && <div className="rounded-lg bg-red-50 border border-red-200 p-2 text-xs text-red-700">{error}</div>}
-          <button type="submit" disabled={saving} className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-[#2E7D32] py-2.5 text-sm font-medium text-white disabled:opacity-60">
+          <button type="submit" disabled={saving} className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-[#2E7D32] py-3 text-sm font-medium text-white disabled:opacity-60 min-h-[44px]">
             {saving && <Loader2 className="h-4 w-4 animate-spin" />} {initial ? "Save changes" : "Save listing"}
           </button>
         </form>
-        <style>{`.input { width:100%; padding:0.5rem 0.75rem; border:1px solid #E2E8F0; border-radius:0.5rem; background:white; font-size:0.875rem; outline:none } .input:focus { border-color:#2E7D32 }`}</style>
+        <style>{`.input { width:100%; padding:0.625rem 0.75rem; border:1px solid #E2E8F0; border-radius:0.5rem; background:white; font-size:0.875rem; outline:none; min-height:42px } .input:focus { border-color:#2E7D32 }`}</style>
       </div>
     </div>
   );
