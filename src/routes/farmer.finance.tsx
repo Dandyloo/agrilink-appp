@@ -47,10 +47,16 @@ function useSubmitApplication() {
   const { user } = useAuth();
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (payload: { type: "input_credit" | "invoice_financing" | "insurance"; amount: number; crop_type?: string }) => {
+    mutationFn: async (payload: { type: "input_credit" | "invoice_financing" | "insurance"; amount: number; crop_type?: string; buyer_name?: string; delivery_date?: string | null; notes?: string }) => {
       if (!user) throw new Error("Not signed in");
       const { error } = await supabase.from("credit_applications").insert({ ...payload, farmer_id: user.id, status: "submitted" });
       if (error) throw error;
+      await supabase.from("notifications").insert({
+        user_id: user.id,
+        title: "Application submitted",
+        description: `Your ${payload.type.replace(/_/g, " ")} application for GHS ${payload.amount.toLocaleString()} is under review.`,
+        kind: "Finance",
+      });
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["credit-apps"] }),
   });
@@ -95,8 +101,15 @@ function InvoiceFinance() {
   const [done, setDone] = useState(false);
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    await m.mutateAsync({ type: "invoice_financing", amount: amt });
+    const f = new FormData(e.currentTarget);
+    await m.mutateAsync({
+      type: "invoice_financing",
+      amount: amt,
+      buyer_name: String(f.get("buyer") || "") || undefined,
+      delivery_date: String(f.get("delivery") || "") || null,
+    });
     setDone(true); setTimeout(() => setDone(false), 3000);
+    (e.target as HTMLFormElement).reset();
   }
   return (
     <div className="space-y-5">
@@ -110,8 +123,8 @@ function InvoiceFinance() {
           <div className="text-xs text-[#64748B]">You receive within 24 hours</div>
           <div className="font-display text-2xl font-bold text-[#F9A825] mt-1">{ghs(amt * 0.8)}</div>
         </div>
-        <Field label="Expected delivery date"><input type="date" className="input" /></Field>
-        <Field label="Buyer name"><input className="input" placeholder="e.g. Greenfield Foods" /></Field>
+        <Field label="Expected delivery date"><input name="delivery" type="date" className="input" /></Field>
+        <Field label="Buyer name"><input name="buyer" className="input" placeholder="e.g. Greenfield Foods" /></Field>
         <p className="text-xs text-[#64748B]">AgriLink retains 5% commission on the remaining 20%</p>
         {done && <div className="text-xs text-[#2E7D32]">✓ Invoice submitted</div>}
         <button type="submit" disabled={m.isPending} className="inline-flex items-center gap-2 rounded-lg bg-[#2E7D32] px-5 py-2.5 text-sm font-medium text-white disabled:opacity-60">
@@ -156,6 +169,7 @@ function Insurance() {
 
 function PastApplications() {
   const { user } = useAuth();
+  const qc = useQueryClient();
   const { data: apps = [] } = useQuery({
     queryKey: ["credit-apps", user?.id],
     enabled: !!user,
@@ -164,19 +178,45 @@ function PastApplications() {
       return data ?? [];
     },
   });
+  const cancel = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("credit_applications").update({ status: "cancelled" }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["credit-apps"] }),
+  });
   if (apps.length === 0) return null;
   const labels: Record<string, string> = { input_credit: "Input Credit", invoice_financing: "Invoice Financing", insurance: "Insurance" };
+  const statusStyles: Record<string, string> = {
+    submitted: "bg-[#FFF8E1] text-[#7A5C0E]",
+    under_review: "bg-[#DBEAFE] text-[#1E40AF]",
+    approved: "bg-[#DCFCE7] text-[#166534]",
+    rejected: "bg-red-50 text-red-700",
+    cancelled: "bg-slate-100 text-slate-600",
+  };
   return (
     <div className="rounded-xl border border-[#E2E8F0] bg-white p-5">
       <h3 className="font-display font-semibold mb-3">Past applications</h3>
       <div className="space-y-2 text-sm">
-        {apps.map((p) => (
-          <div key={p.id} className="flex items-center justify-between rounded-lg border border-[#E2E8F0] p-3">
-            <div>
-              <div className="font-medium">{labels[p.type]} · {ghs(Number(p.amount))}</div>
-              <div className="text-xs text-[#64748B]">{p.crop_type ?? ""} · {new Date(p.created_at).toLocaleDateString()}</div>
+        {apps.map((p: any) => (
+          <div key={p.id} className="rounded-lg border border-[#E2E8F0] p-3">
+            <div className="flex items-start justify-between gap-3 flex-wrap">
+              <div className="min-w-0">
+                <div className="font-medium">{labels[p.type]} · {ghs(Number(p.amount))}</div>
+                <div className="text-xs text-[#64748B] mt-0.5">
+                  {p.crop_type && <span>{p.crop_type} · </span>}
+                  {p.buyer_name && <span>Buyer: {p.buyer_name} · </span>}
+                  {p.delivery_date && <span>Delivery: {p.delivery_date} · </span>}
+                  {new Date(p.created_at).toLocaleDateString()}
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <span className={`text-xs rounded-full px-2 py-0.5 font-medium capitalize ${statusStyles[p.status] ?? "bg-slate-100"}`}>{p.status.replace(/_/g, " ")}</span>
+                {p.status === "submitted" && (
+                  <button onClick={() => cancel.mutate(p.id)} className="text-xs text-red-600 hover:underline">Cancel</button>
+                )}
+              </div>
             </div>
-            <span className="text-xs rounded-full px-2 py-0.5 bg-[#FFF8E1] text-[#7A5C0E] font-medium capitalize">{p.status}</span>
           </div>
         ))}
       </div>
