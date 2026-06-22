@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Search, X, CheckCircle2, Loader2 } from "lucide-react";
-import { REGIONS, CROP_TYPES, ghs } from "@/lib/seed";
+import { REGIONS, COMMODITY_PRICES, ghs } from "@/lib/seed";
 import { useAuth } from "@/hooks/use-auth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,6 +26,7 @@ type Listing = {
 
 function Marketplace() {
   const [q, setQ] = useState("");
+  const [crop, setCrop] = useState("");
   const [region, setRegion] = useState("");
   const [priceRange, setPriceRange] = useState("All");
   const [coldOnly, setColdOnly] = useState(false);
@@ -33,14 +34,15 @@ function Marketplace() {
   const [toast, setToast] = useState<string | null>(null);
 
   const { data: listings = [], isLoading } = useQuery({
-    queryKey: ["marketplace", { q, region, priceRange, coldOnly }],
+    queryKey: ["marketplace", { q, crop, region, priceRange, coldOnly }],
     queryFn: async () => {
       let query = supabase
         .from("produce_listings")
         .select("id, farmer_id, crop, price_per_kg, quantity_kg, region, availability_date, cold_storage, image_url, farmer:profiles!produce_listings_farmer_id_fkey(full_name, cooperative_name)")
         .eq("status", "active")
         .order("created_at", { ascending: false });
-      if (q) query = query.ilike("crop", `%${q}%`);
+      if (crop) query = query.ilike("crop", crop);
+      else if (q) query = query.ilike("crop", `%${q}%`);
       if (region) query = query.eq("region", region);
       if (coldOnly) query = query.eq("cold_storage", true);
       if (priceRange === "Low") query = query.lte("price_per_kg", 10);
@@ -50,6 +52,8 @@ function Marketplace() {
       return (data ?? []) as unknown as Listing[];
     },
   });
+
+  const cropOptions = COMMODITY_PRICES.map((c) => c.crop);
 
   return (
     <div className="space-y-6">
@@ -61,8 +65,8 @@ function Marketplace() {
       </div>
 
       <div className="rounded-xl border border-[#E2E8F0] bg-white p-4 grid sm:grid-cols-4 gap-3">
-        <select className="px-3 py-2 rounded-lg border border-[#E2E8F0] bg-white text-sm">
-          <option value="">All crop types</option>{CROP_TYPES.map((c) => <option key={c}>{c}</option>)}
+        <select value={crop} onChange={(e) => setCrop(e.target.value)} className="px-3 py-2 rounded-lg border border-[#E2E8F0] bg-white text-sm">
+          <option value="">All crop types</option>{cropOptions.map((c) => <option key={c} value={c}>{c}</option>)}
         </select>
         <select value={region} onChange={(e) => setRegion(e.target.value)} className="px-3 py-2 rounded-lg border border-[#E2E8F0] bg-white text-sm">
           <option value="">All regions</option>{REGIONS.map((r) => <option key={r}>{r}</option>)}
