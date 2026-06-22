@@ -1,60 +1,62 @@
-## Goal
+## What I'll change
 
-Make AgriLink fully usable on phones. Fix the sidebar so it's accessible on mobile, and tighten responsive layouts across landing, farmer, and buyer screens.
+### 1. Recent orders — stacked cards on mobile (both dashboards + buyer/farmer order lists)
+The current `<table>` squeezes 5–6 columns into a 375px screen, which is what you're seeing. Fix:
+- On `< sm`: render each order as a card (crop image + crop name, buyer/farmer line, qty · date, total + status pill on the right, action button full-width below).
+- On `≥ sm`: keep the existing table.
+- Apply the same pattern to `farmer.dashboard.tsx`, `buyer.dashboard.tsx`, `farmer.orders.tsx`, and `buyer.orders.tsx` so the experience is consistent.
 
-## 1. Mobile sidebar (the broken feature)
+### 2. Wire up every "decorative" feature
 
-Currently `AppSidebar` is `hidden md:flex`, so on phones there is no navigation at all from any dashboard.
+**Marketplace (`buyer.marketplace.tsx`)**
+- The "All crop types" dropdown currently has no `value`/`onChange` and does nothing. Make it a controlled filter that narrows results by crop name (case-insensitive).
+- Combine with the existing search box so both work together.
 
-Update `src/components/layout.tsx`:
-- Keep the existing fixed sidebar for `md+`.
-- On mobile, render a slide-in drawer with the same nav items, using the existing shadcn `Sheet` component (already in the project).
-- Add a hamburger button to `TopBar` (visible only `<md`) that opens the sheet.
-- Active route + sign-out behavior identical to desktop. Closes on link tap.
-- Keep the Navy color, AgriLink brand mark, and badge inside the drawer.
+**Finance Hub (`farmer.finance.tsx`)**
+- Invoice Financing form collects buyer name + delivery date but throws them away — extend `credit_applications` schema with optional `buyer_name`, `delivery_date`, `notes`, and persist them so "Past applications" actually shows what you applied for.
+- Show buyer/date/notes in the Past applications list.
+- Add a "Withdraw application" button on `submitted` rows that sets status to `cancelled`.
 
-No new dependencies, no router or auth changes.
+**Wallet (`farmer.wallet.tsx`)**
+- Withdrawal currently inserts a transaction with no validation feedback and no confirmation. Improvements:
+  - Validate phone (10-digit Ghana format) and amount ≤ balance with inline errors.
+  - Show a success toast on the wallet page after withdrawal.
+  - Create a notification row ("Withdrawal of GHS X to MTN MoMo completed").
 
-## 2. Landing page responsiveness (`src/routes/index.tsx`)
+**Settings (`farmer.settings.tsx` + `buyer.settings.tsx`)**
+- Notification toggles are local-state only. Add a `notification_prefs` jsonb column on `profiles` (defaults: orders/price/finance on, marketing off) and persist toggles immediately on click. Read from profile on mount.
 
-- Stack hero copy above imagery on `<md`; reduce heading from `text-6xl` to fluid `text-4xl sm:text-5xl lg:text-6xl`.
-- Convert "Preview as Farmer/Buyer" + Sign in/up button rows to `flex-col sm:flex-row` with full-width buttons on mobile.
-- Footer columns: `grid-cols-2 md:grid-cols-4`.
-- Ensure horizontal overflow is eliminated (audit any fixed widths).
+**Notifications (`farmer.notifications.tsx` + `buyer.notifications.tsx`)**
+- Add a Supabase realtime subscription so new notifications (and unread badge in top bar) appear without refresh.
+- Add a "Clear all read" action that deletes read rows.
+- Fix unread badge live-update by invalidating on insert.
 
-## 3. Farmer dashboard + sub-pages
+**Farmer Prices (`farmer.prices.tsx`)**
+- Stays on static `COMMODITY_PRICES` (per your earlier scope), but add a search input + region filter chips so the page actually does something. No backend change.
 
-For each of: `farmer.dashboard`, `farmer.listings`, `farmer.finance`, `farmer.wallet`, `farmer.prices`, `farmer.orders`, `farmer.notifications`, `farmer.settings`:
-- Stat/metric cards: `grid-cols-1 sm:grid-cols-2 lg:grid-cols-4`.
-- Tabs: allow horizontal scroll (`overflow-x-auto`) instead of wrapping/clipping.
-- Tables (orders, listings, prices): wrap in `overflow-x-auto` with `min-w-[640px]` inner table, OR collapse to card list `<sm`.
-- Modals (new listing, withdraw): `max-h-[90vh] overflow-y-auto`, full-width on mobile with `mx-4`.
-- Wallet Navy balance card: reduce padding and font sizes on mobile; keep Gold metrics intact.
-- Prices sparklines: ensure mini-chart row scrolls horizontally on small screens.
+**Landing / sign-in / verify**
+- Already wired — no changes.
 
-## 4. Buyer dashboard + sub-pages
+### 3. Schema changes (one migration)
+- `ALTER TABLE credit_applications` → add `buyer_name text`, `delivery_date date`, `notes text`. Extend status check to include `cancelled`, `approved`, `rejected`.
+- `ALTER TABLE profiles` → add `notification_prefs jsonb NOT NULL DEFAULT '{"orders":true,"prices":true,"finance":true,"marketing":false}'::jsonb`.
+- Enable realtime publication for `notifications`.
 
-For each of: `buyer.dashboard`, `buyer.marketplace`, `buyer.orders`, `buyer.analytics`, `buyer.notifications`, `buyer.settings`:
-- Marketplace filter row: already `sm:grid-cols-4`; verify checkbox alignment and stack to 1-col on phones.
-- Listing card grid already responsive — confirm image heights and button tap target ≥44px.
-- Order modal: already has `max-h-[90vh]`; widen to `max-w-md` but `w-full` with safe padding.
-- Analytics: donut + bar charts wrap in `flex-col lg:flex-row`; legends below charts on mobile.
-- Orders table → card list on `<sm`.
+### 4. Out of scope (call-outs)
+- Commodity prices stay static reference data, as agreed previously.
+- No new payment/MoMo integration — withdrawal still records the intent in `wallet_transactions` like it does today.
+- Admin/approval workflow for credit applications is left as a manual DB action; UI just shows the status that's set.
 
-## 5. Shared polish
+## Files touched
+- migration (new): schema changes above
+- `src/routes/farmer.dashboard.tsx`, `src/routes/buyer.dashboard.tsx`
+- `src/routes/farmer.orders.tsx`, `src/routes/buyer.orders.tsx`
+- `src/routes/buyer.marketplace.tsx`
+- `src/routes/farmer.finance.tsx`
+- `src/routes/farmer.wallet.tsx`
+- `src/routes/farmer.settings.tsx`, `src/routes/buyer.settings.tsx`
+- `src/routes/farmer.notifications.tsx`, `src/routes/buyer.notifications.tsx`
+- `src/routes/farmer.prices.tsx`
+- `src/routes/__root.tsx` (realtime subscription for unread badge)
 
-- Reduce `TopBar` padding from `px-6` to `px-4 sm:px-6`; truncate greeting with `truncate`.
-- `main` padding from `p-6` to `p-4 sm:p-6`.
-- Ticker keeps its marquee but font scaled down on mobile.
-- USSD simulator (`ussd.tsx`): center on screen, max-w-sm, already phone-shaped — verify safe-area padding.
-- Add `min-w-0` to flex children that contain truncating text per responsive guideline.
-
-## Out of scope
-
-- No auth, routing, or data-model changes.
-- No new pages, no design-token changes.
-- Gold color stays reserved for financial metrics.
-
-## Verification
-
-After changes: open preview at 375×812 (mobile) and click through Landing → Preview as Farmer → each sidebar item via hamburger → Preview as Buyer → marketplace → place order. Take a screenshot at mobile and desktop to confirm no overflow and sidebar drawer works.
+After implementation I'll walk both journeys at mobile width (375px) to confirm nothing regresses.
