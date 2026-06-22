@@ -6,6 +6,7 @@ import { useAuth, initials } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { timeGreeting } from "@/lib/crop-images";
+import { useRealtimeNotifications } from "@/hooks/use-realtime-notifications";
 
 export const Route = createFileRoute("/farmer")({
   component: FarmerLayout,
@@ -35,6 +36,8 @@ function FarmerLayout() {
     },
     refetchInterval: 30000,
   });
+
+  useRealtimeNotifications(user?.id);
 
   if (loading || !user || !profile) {
     return <div className="flex min-h-screen items-center justify-center bg-[#F8FAFC] text-sm text-[#64748B]">Loading…</div>;

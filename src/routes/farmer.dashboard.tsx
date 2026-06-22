@@ -70,32 +70,53 @@ function FarmerDashboard() {
           {recent.length === 0 ? (
             <div className="text-sm text-[#64748B] py-6 text-center">No orders yet. Once buyers place orders, they'll appear here.</div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="text-left text-xs text-[#64748B] border-b border-[#E2E8F0]">
-                  <tr>
-                    <th className="pb-2 font-medium">Crop</th>
-                    <th className="pb-2 font-medium">Buyer</th>
-                    <th className="pb-2 font-medium">Qty</th>
-                    <th className="pb-2 font-medium">Value</th>
-                    <th className="pb-2 font-medium">Status</th>
-                    <th className="pb-2 font-medium">Date</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#E2E8F0]">
-                  {recent.map((o: any) => (
-                    <tr key={o.id} className="text-[#1E293B]">
-                      <td className="py-3 font-medium">{o.listing?.crop ?? "—"}</td>
-                      <td className="py-3">{o.buyer?.full_name ?? "—"}</td>
-                      <td className="py-3">{o.quantity_kg}kg</td>
-                      <td className="py-3">{ghs(Number(o.total))}</td>
-                      <td className="py-3"><EscrowPill status={o.escrow_status} /></td>
-                      <td className="py-3 text-[#64748B]">{new Date(o.created_at).toLocaleDateString()}</td>
+            <>
+              {/* Mobile: stacked cards */}
+              <div className="sm:hidden space-y-3">
+                {recent.map((o: any) => (
+                  <div key={o.id} className="rounded-lg border border-[#E2E8F0] p-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="font-display font-semibold text-[#1E293B] truncate">{o.listing?.crop ?? "—"}</div>
+                        <div className="text-xs text-[#64748B] truncate">{o.buyer?.full_name ?? "—"} · {o.quantity_kg}kg</div>
+                        <div className="text-xs text-[#64748B] mt-0.5">{new Date(o.created_at).toLocaleDateString()}</div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <div className="font-display font-semibold text-[#1E293B] text-sm">{ghs(Number(o.total))}</div>
+                        <div className="mt-1"><EscrowPill status={o.escrow_status} /></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* Desktop: table */}
+              <div className="hidden sm:block overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="text-left text-xs text-[#64748B] border-b border-[#E2E8F0]">
+                    <tr>
+                      <th className="pb-2 font-medium">Crop</th>
+                      <th className="pb-2 font-medium">Buyer</th>
+                      <th className="pb-2 font-medium">Qty</th>
+                      <th className="pb-2 font-medium">Value</th>
+                      <th className="pb-2 font-medium">Status</th>
+                      <th className="pb-2 font-medium">Date</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-[#E2E8F0]">
+                    {recent.map((o: any) => (
+                      <tr key={o.id} className="text-[#1E293B]">
+                        <td className="py-3 font-medium">{o.listing?.crop ?? "—"}</td>
+                        <td className="py-3">{o.buyer?.full_name ?? "—"}</td>
+                        <td className="py-3">{o.quantity_kg}kg</td>
+                        <td className="py-3">{ghs(Number(o.total))}</td>
+                        <td className="py-3"><EscrowPill status={o.escrow_status} /></td>
+                        <td className="py-3 text-[#64748B]">{new Date(o.created_at).toLocaleDateString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
           )}
         </div>
 

@@ -71,12 +71,7 @@ function Settings() {
       </Card>
 
       <Card title="Notifications">
-        {[
-          { label: "Order alerts", on: true },
-          { label: "Price alerts", on: true },
-          { label: "Finance updates", on: true },
-          { label: "Marketing emails", on: false },
-        ].map((t) => <Toggle key={t.label} {...t} />)}
+        <NotificationPrefs />
       </Card>
 
       <style>{`.input { width:100%; padding:0.5rem 0.75rem; border:1px solid #E2E8F0; border-radius:0.5rem; background:white; font-size:0.875rem; outline:none } .input:focus { border-color:#2E7D32 }`}</style>
@@ -90,14 +85,42 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return <label className="block mb-3"><span className="block text-sm font-medium text-[#1E293B] mb-1.5">{label}</span>{children}</label>;
 }
-function Toggle({ label, on }: { label: string; on: boolean }) {
-  const [v, setV] = useState(on);
+function NotificationPrefs() {
+  const { user, profile, refresh } = useAuth();
+  const prefs = profile?.notification_prefs ?? { orders: true, prices: true, finance: true, marketing: false };
+  const save = useMutation({
+    mutationFn: async (next: Record<string, boolean>) => {
+      if (!user) throw new Error("Not signed in");
+      const { error } = await supabase.from("profiles").update({ notification_prefs: next as any }).eq("id", user.id);
+      if (error) throw error;
+      await refresh();
+    },
+  });
+  const items: { key: "orders" | "prices" | "finance" | "marketing"; label: string }[] = [
+    { key: "orders", label: "Order alerts" },
+    { key: "prices", label: "Price alerts" },
+    { key: "finance", label: "Finance updates" },
+    { key: "marketing", label: "Marketing emails" },
+  ];
   return (
-    <div className="flex items-center justify-between py-2.5 border-b border-[#E2E8F0] last:border-0">
-      <span className="text-sm">{label}</span>
-      <button onClick={() => setV(!v)} className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${v ? "bg-[#2E7D32]" : "bg-slate-300"}`}>
-        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${v ? "translate-x-6" : "translate-x-1"}`} />
-      </button>
-    </div>
+    <>
+      {items.map((it) => {
+        const on = (prefs as any)[it.key] ?? false;
+        return (
+          <div key={it.key} className="flex items-center justify-between py-2.5 border-b border-[#E2E8F0] last:border-0">
+            <span className="text-sm">{it.label}</span>
+            <button
+              type="button"
+              disabled={save.isPending}
+              onClick={() => save.mutate({ ...prefs, [it.key]: !on })}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition disabled:opacity-60 ${on ? "bg-[#2E7D32]" : "bg-slate-300"}`}
+              aria-pressed={on}
+            >
+              <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${on ? "translate-x-6" : "translate-x-1"}`} />
+            </button>
+          </div>
+        );
+      })}
+    </>
   );
 }

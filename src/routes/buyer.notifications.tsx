@@ -36,14 +36,22 @@ function BuyerNotifs() {
     mutationFn: async () => { await supabase.from("notifications").update({ is_read: true }).eq("user_id", uid!).eq("is_read", false); },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["notifs", uid] }); qc.invalidateQueries({ queryKey: ["unread-notifs", uid] }); },
   });
+  const clearRead = useMutation({
+    mutationFn: async () => { await supabase.from("notifications").delete().eq("user_id", uid!).eq("is_read", true); },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["notifs", uid] }),
+  });
 
   const filtered = tab === "All" ? list : list.filter((n) => n.kind === tab);
+  const hasRead = list.some((n) => n.is_read);
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2 flex-wrap">
         <h1 className="font-display text-2xl font-semibold">Notifications</h1>
-        <button onClick={() => markAll.mutate()} className="text-sm text-[#2E7D32] font-medium hover:underline">Mark all read</button>
+        <div className="flex items-center gap-3 text-sm">
+          <button onClick={() => markAll.mutate()} className="text-[#2E7D32] font-medium hover:underline">Mark all read</button>
+          {hasRead && <button onClick={() => clearRead.mutate()} className="text-[#64748B] hover:underline">Clear read</button>}
+        </div>
       </div>
       <div className="flex gap-2 border-b border-[#E2E8F0]">
         {(["All", "Orders", "Finance", "Prices"] as const).map((t) => (

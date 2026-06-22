@@ -17,28 +17,37 @@ export type Database = {
       credit_applications: {
         Row: {
           amount: number
+          buyer_name: string | null
           created_at: string
           crop_type: string | null
+          delivery_date: string | null
           farmer_id: string
           id: string
+          notes: string | null
           status: string
           type: string
         }
         Insert: {
           amount: number
+          buyer_name?: string | null
           created_at?: string
           crop_type?: string | null
+          delivery_date?: string | null
           farmer_id: string
           id?: string
+          notes?: string | null
           status?: string
           type: string
         }
         Update: {
           amount?: number
+          buyer_name?: string | null
           created_at?: string
           crop_type?: string | null
+          delivery_date?: string | null
           farmer_id?: string
           id?: string
+          notes?: string | null
           status?: string
           type?: string
         }
@@ -216,6 +225,7 @@ export type Database = {
           id: string
           id_number: string | null
           id_type: string | null
+          notification_prefs: Json
           phone: string | null
           region: string | null
           role: string
@@ -229,6 +239,7 @@ export type Database = {
           id: string
           id_number?: string | null
           id_type?: string | null
+          notification_prefs?: Json
           phone?: string | null
           region?: string | null
           role?: string
@@ -242,6 +253,7 @@ export type Database = {
           id?: string
           id_number?: string | null
           id_type?: string | null
+          notification_prefs?: Json
           phone?: string | null
           region?: string | null
           role?: string
