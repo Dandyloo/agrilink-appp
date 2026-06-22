@@ -85,24 +85,44 @@ function BuyerDashboard() {
         {orders.length === 0 ? (
           <div className="text-sm text-[#64748B] py-4">No orders yet. Visit the marketplace to place your first order.</div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="text-left text-xs text-[#64748B] border-b border-[#E2E8F0]">
-                <tr><th className="pb-2 font-medium">Crop</th><th className="pb-2 font-medium">Farmer</th><th className="pb-2 font-medium">Qty</th><th className="pb-2 font-medium">Value</th><th className="pb-2 font-medium">Status</th></tr>
-              </thead>
-              <tbody className="divide-y divide-[#E2E8F0]">
-                {orders.slice(0, 5).map((o) => (
-                  <tr key={o.id}>
-                    <td className="py-3 font-medium">{o.listing?.crop ?? "—"}</td>
-                    <td className="py-3">{o.farmer?.full_name ?? "—"}</td>
-                    <td className="py-3">{o.quantity_kg}kg</td>
-                    <td className="py-3">{ghs(Number(o.total))}</td>
-                    <td className="py-3"><EscrowPill status={o.escrow_status} /></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <>
+            {/* Mobile cards */}
+            <div className="sm:hidden space-y-3">
+              {orders.slice(0, 5).map((o) => (
+                <div key={o.id} className="rounded-lg border border-[#E2E8F0] p-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="font-display font-semibold truncate">{o.listing?.crop ?? "—"}</div>
+                      <div className="text-xs text-[#64748B] truncate">{o.farmer?.full_name ?? "—"} · {o.quantity_kg}kg</div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="font-display font-semibold text-sm">{ghs(Number(o.total))}</div>
+                      <div className="mt-1"><EscrowPill status={o.escrow_status} /></div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {/* Desktop table */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="text-left text-xs text-[#64748B] border-b border-[#E2E8F0]">
+                  <tr><th className="pb-2 font-medium">Crop</th><th className="pb-2 font-medium">Farmer</th><th className="pb-2 font-medium">Qty</th><th className="pb-2 font-medium">Value</th><th className="pb-2 font-medium">Status</th></tr>
+                </thead>
+                <tbody className="divide-y divide-[#E2E8F0]">
+                  {orders.slice(0, 5).map((o) => (
+                    <tr key={o.id}>
+                      <td className="py-3 font-medium">{o.listing?.crop ?? "—"}</td>
+                      <td className="py-3">{o.farmer?.full_name ?? "—"}</td>
+                      <td className="py-3">{o.quantity_kg}kg</td>
+                      <td className="py-3">{ghs(Number(o.total))}</td>
+                      <td className="py-3"><EscrowPill status={o.escrow_status} /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
     </div>
