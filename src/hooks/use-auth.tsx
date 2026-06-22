@@ -13,6 +13,12 @@ export type Profile = {
   id_type: string | null;
   id_number: string | null;
   verification_status: "pending" | "verified";
+  notification_prefs?: {
+    orders?: boolean;
+    prices?: boolean;
+    finance?: boolean;
+    marketing?: boolean;
+  } | null;
 };
 
 type AuthState = {
