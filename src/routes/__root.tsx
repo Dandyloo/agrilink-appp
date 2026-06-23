@@ -22,8 +22,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:title", content: "AgriLink Solutions — Ghana's Agri-Fintech Marketplace" },
       { name: "twitter:description", content: "Ghana's first Agri-Fintech marketplace connecting farmers, buyers and financial services. Fair prices, secure escrow payments, instant financing." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/4af3e380-9d40-4f7e-a1fb-33f8664b1542" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/4af3e380-9d40-4f7e-a1fb-33f8664b1542" },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/443f8315-e98d-4d4b-ac20-99232f986138/id-preview-b0c183f6--aa1616d9-f724-4569-8b0c-d4c040e1b9a1.lovable.app-1782232505183.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/443f8315-e98d-4d4b-ac20-99232f986138/id-preview-b0c183f6--aa1616d9-f724-4569-8b0c-d4c040e1b9a1.lovable.app-1782232505183.png" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
