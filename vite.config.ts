@@ -10,7 +10,7 @@ export default defineConfig({
   tanstackStart: {
     server: { entry: "server" },
     nitro: {
-      presets: ["vercel"],
+      presets: ["vercel-edge"],
     },
   },
 });
