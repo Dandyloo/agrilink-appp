@@ -6,7 +6,7 @@
 const CACHE_NAME = "agrilink-shell-v1";
 
 const SHELL_ASSETS = [
-  "/app-entry",
+  "/",
   "/manifest.webmanifest",
   "/icon-192.png",
   "/icon-512.png",
