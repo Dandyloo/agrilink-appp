@@ -2,7 +2,7 @@
   "name": "AgriLink Solutions",
   "short_name": "AgriLink",
   "description": "Ghana's Agri-Fintech marketplace connecting farmers, buyers and financial services.",
-  "start_url": "/",
+  "start_url": "/app-entry",
   "scope": "/",
   "display": "standalone",
   "background_color": "#F8FAFC",

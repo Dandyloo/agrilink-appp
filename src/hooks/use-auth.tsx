@@ -53,12 +53,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setProfile(null);
       }
     });
-    supabase.auth.getSession().then(({ data }) => {
-      if (!mounted) return;
-      setSession(data.session);
-      if (data.session?.user) loadProfile(data.session.user.id).finally(() => setLoading(false));
-      else setLoading(false);
-    });
+
+    // On cold start (e.g. reopening an installed PWA), getSession() can fail
+    // transiently if the device hasn't reconnected to the network yet. We
+    // fall back to whatever is in localStorage rather than treating a
+    // network hiccup as "logged out" and bouncing the user to /signin.
+    const bootstrapSession = async () => {
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (!mounted) return;
+        if (error) throw error;
+        setSession(data.session);
+        if (data.session?.user) {
+          await loadProfile(data.session.user.id);
+        }
+      } catch (err) {
+        console.error("Session bootstrap failed, will rely on auth listener / retry:", err);
+        // Don't clear session here — leave it as whatever it currently is.
+        // onAuthStateChange will correct it once Supabase reconnects.
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    bootstrapSession();
+
     return () => { mounted = false; sub.subscription.unsubscribe(); };
   }, []);
 
