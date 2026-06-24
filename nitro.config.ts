@@ -1,7 +1,0 @@
-import { defineNitroConfig } from "nitropack/config";
-
-export default defineNitroConfig({
-  preset: "vercel-edge",
-  srcDir: "src",
-});
-
