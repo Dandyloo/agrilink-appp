@@ -2,6 +2,7 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { ShieldCheck, LogOut, Menu, X } from "lucide-react";
 import { useEffect, useState, type ComponentType } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import { DarkModeToggle } from "@/components/dark-mode-toggle";
 
 export type NavItem = {
   to: string;
@@ -153,6 +154,7 @@ export function TopBar({
       </div>
       <div className="flex shrink-0 items-center gap-3 sm:gap-4">
         <Link to="/notifications" className="relative">
+          
           <BellIcon />
           {unread > 0 && (
             <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">{unread}</span>
@@ -161,6 +163,8 @@ export function TopBar({
         <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#2E7D32] text-sm font-semibold text-white">
           {initials}
         </div>
+        <DarkModeToggle />
+          <button aria-label="Notifications"></button>
       </div>
     </header>
   );

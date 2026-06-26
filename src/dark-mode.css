@@ -1,0 +1,85 @@
+/* ─── PASTE THIS INTO YOUR src/styles.css ─────────────────────────────────────
+   Add the dark-mode block below your existing :root variables.
+   AgriLink uses a data-theme="dark" attribute on <html> (set by use-dark-mode.ts)
+   AND Tailwind's .dark class for the dark: variant.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Light mode defaults (these likely already exist — keep them) */
+:root {
+  --bg-page: #F8FAFC;
+  --bg-card: #ffffff;
+  --bg-sidebar: #0F172A;
+  --text-primary: #1E293B;
+  --text-secondary: #64748B;
+  --text-muted: #94A3B8;
+  --border-default: #E2E8F0;
+  --border-strong: #CBD5E1;
+  --green-primary: #2E7D32;
+  --green-light: #E8F5E9;
+  --gold: #F9A825;
+  --gold-light: #FEF3C7;
+}
+
+/* Dark mode overrides */
+[data-theme="dark"],
+.dark {
+  --bg-page: #0A0F1A;
+  --bg-card: #111827;
+  --bg-sidebar: #070B12;
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --border-default: #1E293B;
+  --border-strong: #334155;
+  --green-primary: #4CAF50;
+  --green-light: #14291B;
+  --gold: #F9A825;
+  --gold-light: #2D2006;
+}
+
+/* Apply page background automatically */
+body {
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+/* ─── DARK MODE UTILITY OVERRIDES ────────────────────────────────────────────
+   Add these Tailwind-style classes so existing hardcoded bg-white / border
+   panels also switch theme without rewriting every component.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+[data-theme="dark"] .bg-white,
+.dark .bg-white {
+  background-color: var(--bg-card) !important;
+}
+
+[data-theme="dark"] .bg-\[\#F8FAFC\],
+.dark .bg-\[\#F8FAFC\] {
+  background-color: var(--bg-page) !important;
+}
+
+[data-theme="dark"] .border-\[\#E2E8F0\],
+.dark .border-\[\#E2E8F0\] {
+  border-color: var(--border-default) !important;
+}
+
+[data-theme="dark"] .text-\[\#1E293B\],
+.dark .text-\[\#1E293B\] {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .text-\[\#64748B\],
+.dark .text-\[\#64748B\] {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .bg-\[\#E8F5E9\],
+.dark .bg-\[\#E8F5E9\] {
+  background-color: var(--green-light) !important;
+}
+
+[data-theme="dark"] .bg-\[\#F1F5F9\],
+.dark .bg-\[\#F1F5F9\] {
+  background-color: #1E293B !important;
+}

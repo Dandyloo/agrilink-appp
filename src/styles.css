@@ -91,3 +91,4 @@
   to { transform: translateX(-50%); }
 }
 .animate-ticker { animation: ticker 40s linear infinite; }
+@import "./dark-mode.css";

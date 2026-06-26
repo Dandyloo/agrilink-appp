@@ -5,6 +5,7 @@ import { REGIONS, COMMODITY_PRICES, ghs } from "@/lib/seed";
 import { useAuth } from "@/hooks/use-auth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { GhanaMap } from "@/components/ghana-map";
 
 export const Route = createFileRoute("/buyer/marketplace")({
   head: () => ({ meta: [{ title: "Marketplace — AgriLink" }] }),
@@ -78,6 +79,7 @@ function Marketplace() {
           <input type="checkbox" checked={coldOnly} onChange={(e) => setColdOnly(e.target.checked)} /> Cold storage only
         </label>
       </div>
+      <GhanaMap onRegionClick={(r) => setRegion(r)} />
 
       <div className="text-sm text-[#64748B]">{isLoading ? "Loading…" : `Showing ${listings.length} listing${listings.length !== 1 ? "s" : ""}`}</div>
 

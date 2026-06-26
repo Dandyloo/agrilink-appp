@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AgriLink — Offline</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      background: #F8FAFC;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      background: white;
+      border: 1px solid #E2E8F0;
+      border-radius: 20px;
+      padding: 48px 40px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+    .logo { font-size: 26px; font-weight: 700; color: #2E7D32; margin-bottom: 4px; }
+    .logo span { color: #F9A825; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; vertical-align: middle; margin-left: 6px; }
+    .icon { font-size: 56px; margin: 28px 0 20px; }
+    h1 { font-size: 20px; font-weight: 600; color: #1E293B; margin-bottom: 10px; }
+    p { font-size: 14px; color: #64748B; line-height: 1.6; margin-bottom: 28px; }
+    button {
+      background: #2E7D32;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 28px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover { background: #256528; }
+    .tip {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #94A3B8;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">AgriLink <span>Solutions</span></div>
+    <div class="icon">🌾</div>
+    <h1>You're offline</h1>
+    <p>No internet connection detected. Check your network and try again — your data is safe and will sync when you're back online.</p>
+    <button onclick="window.location.reload()">Try again</button>
+    <p class="tip">Pages you've visited before are available offline.</p>
+  </div>
+</body>
+</html>

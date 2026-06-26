@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { timeGreeting } from "@/lib/crop-images";
 import { useRealtimeNotifications } from "@/hooks/use-realtime-notifications";
+import { PWABanner } from "@/components/pwa-banner";
 
 export const Route = createFileRoute("/farmer")({
   component: FarmerLayout,
@@ -61,6 +62,7 @@ function FarmerLayout() {
           unread={unread}
           onMenuClick={nav.openMenu}
         />
+        <PWABanner />
         <main className="flex-1 p-4 sm:p-6"><Outlet /></main>
       </div>
     </div>

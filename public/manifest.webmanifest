@@ -1,13 +1,15 @@
 {
   "name": "AgriLink Solutions",
   "short_name": "AgriLink",
-  "description": "Ghana's Agri-Fintech marketplace connecting farmers, buyers and financial services.",
+  "description": "Ghana's Agri-Fintech marketplace connecting farmers, buyers and financial services. Fair prices, secure escrow payments, instant financing.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#F8FAFC",
   "theme_color": "#2E7D32",
   "orientation": "portrait-primary",
+  "lang": "en-GH",
+  "categories": ["finance", "shopping", "business"],
   "icons": [
     {
       "src": "/icon-192.png",
@@ -27,5 +29,46 @@
       "type": "image/png",
       "purpose": "maskable"
     }
-  ]
+  ],
+  "shortcuts": [
+    {
+      "name": "Marketplace",
+      "short_name": "Market",
+      "description": "Browse available produce",
+      "url": "/buyer/marketplace",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "My Listings",
+      "short_name": "Listings",
+      "description": "Manage your produce listings",
+      "url": "/farmer/listings",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Wallet",
+      "short_name": "Wallet",
+      "description": "Check your earnings and wallet",
+      "url": "/farmer/wallet",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "AgriLink farmer dashboard on mobile"
+    },
+    {
+      "src": "/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "AgriLink marketplace on desktop"
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": []
 }
