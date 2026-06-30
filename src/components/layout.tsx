@@ -4,11 +4,48 @@ import { useEffect, useState, type ComponentType } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { DarkModeToggle } from "@/components/dark-mode-toggle";
 
+export type BottomNavItem = {
+  to: string;
+  label: string;
+  icon: ComponentType<{ className?: string }>;
+};
+
 export type NavItem = {
   to: string;
   label: string;
   icon: ComponentType<{ className?: string }>;
 };
+
+export function BottomNav({ items }: { items: BottomNavItem[] }) {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const visibleItems = items.slice(0, 5);
+
+  return (
+    <nav
+      className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-[#E2E8F0] flex"
+      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+    >
+      {visibleItems.map((item) => {
+        const active = pathname === item.to;
+        const Icon = item.icon;
+        return (
+          <Link
+            key={item.to}
+            to={item.to}
+            className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors min-h-[52px] ${
+              active ? "text-[#2E7D32]" : "text-[#94A3B8]"
+            }`}
+          >
+            <div className={`relative flex items-center justify-center h-6 w-6 rounded-lg transition-all ${active ? "bg-[#E8F5E9]" : ""}`}>
+              <Icon className={`h-4.5 w-4.5 ${active ? "text-[#2E7D32]" : "text-[#94A3B8]"}`} />
+            </div>
+            <span className="leading-tight truncate max-w-[56px] text-center">{item.label}</span>
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
 
 function SidebarInner({
   items,

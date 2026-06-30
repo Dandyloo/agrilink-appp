@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { GhanaMap } from "@/components/ghana-map";
+import { imageForCrop } from "@/lib/crop-images";
 
 export const Route = createFileRoute("/buyer/marketplace")({
   head: () => ({ meta: [{ title: "Marketplace — AgriLink" }] }),
@@ -87,7 +88,7 @@ function Marketplace() {
         {listings.map((l) => (
           <div key={l.id} className="rounded-xl border border-[#E2E8F0] bg-white overflow-hidden flex flex-col">
             <div className="relative">
-              <img src={l.image_url || "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400"} alt={l.crop} className="w-full h-36 object-cover" />
+              <img src={l.image_url || imageForCrop(l.crop)} alt={l.crop} className="w-full h-36 object-cover" />
               <span className="absolute top-2 right-2 text-xs rounded-full px-2 py-0.5 bg-[#2E7D32] text-white font-medium">{l.region}</span>
               {l.cold_storage && <span className="absolute top-2 left-2 text-xs rounded-full px-2 py-0.5 bg-[#DBEAFE] text-[#1E40AF] font-medium">❄ Cold</span>}
             </div>

@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { AppSidebar, TopBar, useMobileNav } from "@/components/layout";
-import { BUYER_NAV } from "@/components/nav-items";
+import { AppSidebar, TopBar, BottomNav, useMobileNav } from "@/components/layout";
+import { BUYER_NAV, BUYER_BOTTOM_NAV } from "@/components/nav-items";
 import { useAuth, initials } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -41,7 +41,14 @@ function BuyerLayout() {
   useRealtimeNotifications(user?.id);
 
   if (loading || !user || !profile) {
-    return <div className="flex min-h-screen items-center justify-center bg-[#F8FAFC] text-sm text-[#64748B]">Loading…</div>;
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#F8FAFC]">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-10 w-10 rounded-full border-3 border-[#2E7D32] border-t-transparent animate-spin" />
+          <span className="text-sm text-[#64748B]">Loading AgriLink…</span>
+        </div>
+      </div>
+    );
   }
 
   const badge = profile.verification_status === "verified" ? "Verified Buyer" : "Pending verification";
@@ -63,8 +70,13 @@ function BuyerLayout() {
           onMenuClick={nav.openMenu}
         />
         <PWABanner />
-        <main className="flex-1 p-4 sm:p-6"><Outlet /></main>
+        {/* pb-24 on mobile leaves room for the bottom nav bar */}
+        <main className="flex-1 p-4 sm:p-6 pb-24 md:pb-6">
+          <Outlet />
+        </main>
       </div>
+      {/* Mobile bottom navigation */}
+      <BottomNav items={BUYER_BOTTOM_NAV} />
     </div>
   );
 }

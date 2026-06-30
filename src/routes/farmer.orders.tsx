@@ -6,6 +6,7 @@ import { EscrowPill } from "@/components/layout";
 import { useAuth } from "@/hooks/use-auth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { imageForCrop } from "@/lib/crop-images";
 
 export const Route = createFileRoute("/farmer/orders")({
   head: () => ({ meta: [{ title: "Orders — AgriLink" }] }),
@@ -68,7 +69,7 @@ function FarmerOrders() {
         <div className="space-y-3">
           {list.map((o) => (
             <div key={o.id} className="rounded-xl border border-[#E2E8F0] bg-white p-4 flex flex-wrap sm:flex-nowrap items-center gap-3 sm:gap-4">
-              <img src={o.listing?.image_url || "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400"} alt="" className="h-12 w-12 shrink-0 rounded-lg object-cover" />
+              <img src={o.listing?.image_url || imageForCrop(o.listing?.crop)} alt="" className="h-12 w-12 shrink-0 rounded-lg object-cover" />
               <div className="flex-1 min-w-0">
                 <div className="font-display font-semibold text-[#1E293B] truncate">{o.listing?.crop ?? "—"}</div>
                 <div className="text-xs text-[#64748B] truncate">Buyer: {o.buyer?.full_name ?? "—"} · {o.quantity_kg}kg · {o.buyer?.region ?? ""}</div>

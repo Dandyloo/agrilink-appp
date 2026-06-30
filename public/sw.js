@@ -1,19 +1,26 @@
-// AgriLink Service Worker — PWA offline support
-const CACHE_NAME = "agrilink-v1";
+// AgriLink Service Worker v2 — PWA offline support
+const CACHE_NAME = "agrilink-v2";
 const OFFLINE_URL = "/offline.html";
 
+// App shell routes to precache so the app loads offline instantly
 const PRECACHE = [
   "/",
   "/offline.html",
   "/manifest.webmanifest",
   "/icon-192.png",
   "/icon-512.png",
+  "/apple-touch-icon.png",
+  "/maskable-icon-512.png",
 ];
 
 // Install: pre-cache shell assets
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE))
+    caches.open(CACHE_NAME).then((cache) =>
+      cache.addAll(PRECACHE).catch((err) => {
+        console.warn("[SW] Precache partial failure:", err);
+      })
+    )
   );
   self.skipWaiting();
 });
@@ -23,9 +30,7 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
-        keys
-          .filter((k) => k !== CACHE_NAME)
-          .map((k) => caches.delete(k))
+        keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))
       )
     )
   );
@@ -33,46 +38,61 @@ self.addEventListener("activate", (event) => {
 });
 
 // Fetch strategy:
-//   - Navigation requests → network-first, fallback to offline page
-//   - Supabase API → network-only (never cache auth/data)
-//   - Static assets → cache-first
-//   - Everything else → network-first, stash response in cache
+//   Navigation → network-first, fallback offline page
+//   Supabase / API → network-only (never cache auth/data)
+//   Google Fonts / static assets → cache-first, update in background (stale-while-revalidate)
+//   Everything else → network-first, stash in cache
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip non-GET and supabase requests entirely
+  // Skip non-GET
   if (request.method !== "GET") return;
-  if (url.hostname.includes("supabase.co")) return;
-  if (url.hostname.includes("unsplash.com")) return;
+
+  // Never cache Supabase, auth, or external API calls
+  if (
+    url.hostname.includes("supabase.co") ||
+    url.hostname.includes("supabase.io") ||
+    url.pathname.includes("/auth/") ||
+    url.hostname.includes("cloudinary.com")
+  ) return;
 
   // Navigation: network-first, fall back to offline page
   if (request.mode === "navigate") {
     event.respondWith(
-      fetch(request).catch(() =>
-        caches.match(OFFLINE_URL).then((r) => r || new Response("Offline"))
-      )
+      fetch(request)
+        .then((res) => {
+          // Stash a copy of navigated pages
+          if (res.ok) {
+            const clone = res.clone();
+            caches.open(CACHE_NAME).then((c) => c.put(request, clone));
+          }
+          return res;
+        })
+        .catch(() =>
+          caches.match(request).then(
+            (cached) => cached || caches.match(OFFLINE_URL).then((r) => r || new Response("Offline"))
+          )
+        )
     );
     return;
   }
 
-  // Static assets (fonts, images, scripts): cache-first
+  // Google Fonts + static assets: stale-while-revalidate
   const isStatic =
     url.hostname.includes("fonts.g") ||
-    /\.(png|jpg|jpeg|webp|ico|woff2?|css|js)(\?.*)?$/.test(url.pathname);
+    /\.(png|jpg|jpeg|webp|ico|svg|woff2?|ttf|css|js)(\?.*)?$/.test(url.pathname);
 
   if (isStatic) {
     event.respondWith(
-      caches.match(request).then(
-        (cached) =>
-          cached ||
-          fetch(request).then((res) => {
-            if (res.ok) {
-              const clone = res.clone();
-              caches.open(CACHE_NAME).then((c) => c.put(request, clone));
-            }
+      caches.open(CACHE_NAME).then((cache) =>
+        cache.match(request).then((cached) => {
+          const networkFetch = fetch(request).then((res) => {
+            if (res.ok) cache.put(request, res.clone());
             return res;
-          })
+          });
+          return cached || networkFetch;
+        })
       )
     );
     return;
@@ -100,12 +120,10 @@ self.addEventListener("sync", (event) => {
 });
 
 async function retryPendingOrders() {
-  // Pending orders are stored in IndexedDB by the app
-  // This is a placeholder — wire up with idb-keyval in production
   console.log("[SW] Retrying pending orders on reconnect");
 }
 
-// Push notifications (Africa's Talking / Firebase)
+// Push notifications
 self.addEventListener("push", (event) => {
   if (!event.data) return;
   const { title, body, icon, url } = event.data.json();

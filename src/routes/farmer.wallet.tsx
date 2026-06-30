@@ -186,6 +186,7 @@ function WithdrawModal({ farmerId, phone, maxAmount, onClose, onSuccess }: { far
         <label className="block mb-3"><span className="block text-sm font-medium mb-1.5">Phone number</span><input name="phone" className="input" defaultValue={phone} placeholder="024 123 4567" /></label>
         <label className="block mb-3"><span className="block text-sm font-medium mb-1.5">Amount (max {ghs(maxAmount)})</span><input name="amount" type="number" max={maxAmount} min={1} required className="input" placeholder="0.00" /></label>
         <p className="mt-3 text-xs text-[#64748B]">No withdrawal fee · Arrives within 5 minutes</p>
+        <p className="mt-1 text-xs text-[#94A3B8]">⚠ Demo mode — MoMo API integration active in production</p>
         {error && <div className="mt-3 text-xs text-red-600">{error}</div>}
         <button disabled={m.isPending} type="submit" className="mt-5 w-full inline-flex items-center justify-center gap-2 rounded-lg bg-[#2E7D32] px-4 py-3 text-sm font-medium text-white disabled:opacity-60">
           {m.isPending && <Loader2 className="h-4 w-4 animate-spin" />} Confirm withdrawal

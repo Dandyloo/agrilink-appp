@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Leaf, Store, ShieldCheck, Banknote, TrendingDown } from "lucide-react";
+import { Leaf, Store, ShieldCheck, Banknote, TrendingDown, Smartphone, Share2 } from "lucide-react";
 import heroImg from "@/assets/hero-farmer-ghana.jpg";
+import { usePWA } from "@/hooks/use-pwa";
 
 export const Route = createFileRoute("/")({
   component: Landing,
@@ -15,7 +16,73 @@ function Logo({ light = false }: { light?: boolean }) {
   );
 }
 
+function InstallSection() {
+  const { installPrompt, promptInstall, isInstalled, isIOS, isAndroid } = usePWA();
+
+  if (isInstalled) {
+    return (
+      <div className="bg-[#E8F5E9] py-4 text-center text-sm text-[#1B5E20] font-medium">
+        ✅ AgriLink is installed on your device
+      </div>
+    );
+  }
+
+  return (
+    <section className="bg-[#0F172A] py-12 sm:py-16 text-white">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 text-center">
+        <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#2E7D32] mb-5">
+          <Smartphone className="h-7 w-7 text-white" />
+        </div>
+        <h2 className="font-display text-2xl sm:text-3xl font-bold">Get the app — free, always</h2>
+        <p className="mt-3 text-white/70 max-w-md mx-auto text-sm sm:text-base">
+          Install AgriLink directly from your browser. No App Store, no Play Store, no fee.
+        </p>
+
+        <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
+          {/* Android / Desktop Chrome */}
+          {(installPrompt || isAndroid) && (
+            <button
+              onClick={installPrompt ? promptInstall : undefined}
+              className="inline-flex items-center gap-2.5 rounded-xl bg-[#2E7D32] px-6 py-3.5 text-sm font-semibold text-white hover:bg-[#256528] min-w-[200px] justify-center"
+            >
+              <Smartphone className="h-5 w-5" />
+              Install on Android
+            </button>
+          )}
+
+          {/* iOS */}
+          {isIOS && (
+            <div className="rounded-xl border border-white/20 bg-white/5 px-6 py-4 text-left max-w-xs">
+              <div className="flex items-center gap-2 mb-2 text-sm font-semibold text-[#F9A825]">
+                <Share2 className="h-4 w-4" /> iPhone / iPad
+              </div>
+              <ol className="space-y-1.5 text-xs text-white/80">
+                <li>1. Open this page in <strong className="text-white">Safari</strong></li>
+                <li>2. Tap the <strong className="text-white">Share</strong> button (bottom toolbar)</li>
+                <li>3. Tap <strong className="text-white">"Add to Home Screen"</strong></li>
+              </ol>
+            </div>
+          )}
+
+          {/* Generic — no install prompt available yet (desktop non-Chrome) */}
+          {!installPrompt && !isIOS && !isAndroid && (
+            <div className="text-sm text-white/60">
+              Open this site in <strong className="text-white">Chrome on Android</strong> or <strong className="text-white">Safari on iPhone</strong> to install as an app.
+            </div>
+          )}
+        </div>
+
+        <p className="mt-6 text-xs text-white/40">
+          PWA — works offline · No storage required · Instant updates
+        </p>
+      </div>
+    </section>
+  );
+}
+
 function Landing() {
+  const { installPrompt, promptInstall, isInstalled } = usePWA();
+
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       {/* HERO */}
@@ -36,6 +103,11 @@ function Landing() {
               <a href="#tools" className="hover:text-white">For Farmers</a>
               <a href="#tools" className="hover:text-white">For Buyers</a>
               <Link to="/signin" className="hover:text-white">Sign In</Link>
+              {installPrompt && !isInstalled && (
+                <button onClick={promptInstall} className="rounded-lg bg-[#2E7D32] px-4 py-1.5 text-sm font-semibold text-white hover:bg-[#256528]">
+                  Install App
+                </button>
+              )}
             </div>
             <Link to="/signin" className="md:hidden text-sm text-white/80 hover:text-white">Sign In</Link>
           </nav>
@@ -165,6 +237,8 @@ function Landing() {
           </div>
         </div>
       </section>
+
+      <InstallSection />
 
       {/* FOOTER */}
       <footer className="bg-white border-t border-[#E2E8F0] py-10 sm:py-12">
