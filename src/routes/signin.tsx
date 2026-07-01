@@ -1,7 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/signin")({
   head: () => ({ meta: [{ title: "Sign In — AgriLink Solutions" }] }),
@@ -12,6 +13,15 @@ function SignIn() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { user, profile, loading } = useAuth();
+
+  // Already logged in — go straight to dashboard
+  useEffect(() => {
+    if (loading) return;
+    if (!user) return;
+    if (profile?.role === "buyer") navigate({ to: "/buyer/dashboard" });
+    else if (profile) navigate({ to: "/farmer/dashboard" });
+  }, [loading, user, profile, navigate]);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

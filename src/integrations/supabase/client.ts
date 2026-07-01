@@ -20,10 +20,12 @@ function createSupabaseClient() {
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
     auth: {
-      storage: typeof window !== 'undefined' ? localStorage : undefined,
-      persistSession: true,
-      autoRefreshToken: true,
-    }
+      storage: typeof window !== "undefined" ? localStorage : undefined,
+      persistSession: true,        // Keep session in localStorage across closes
+      autoRefreshToken: true,      // Silently refresh tokens before they expire
+      detectSessionInUrl: true,    // Handle magic link / OAuth callbacks
+      flowType: "pkce",            // More secure auth flow for PWAs
+    },
   });
 }
 
@@ -37,4 +39,3 @@ export const supabase = new Proxy({} as ReturnType<typeof createSupabaseClient>,
     return Reflect.get(_supabase, prop, receiver);
   },
 });
-

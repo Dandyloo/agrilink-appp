@@ -1,7 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Leaf, Store, ShieldCheck, Banknote, TrendingDown, Smartphone, Share2 } from "lucide-react";
 import heroImg from "@/assets/hero-farmer-ghana.jpg";
 import { usePWA } from "@/hooks/use-pwa";
+import { useAuth } from "@/hooks/use-auth";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/")({
   component: Landing,
@@ -82,6 +84,39 @@ function InstallSection() {
 
 function Landing() {
   const { installPrompt, promptInstall, isInstalled } = usePWA();
+  const { user, profile, loading } = useAuth();
+  const navigate = useNavigate();
+
+  // If user is already signed in, skip the landing page entirely
+  useEffect(() => {
+    if (loading) return;
+    if (!user) return;
+    // Redirect to their dashboard based on role
+    if (profile?.role === "buyer") {
+      navigate({ to: "/buyer/dashboard" });
+    } else if (profile) {
+      navigate({ to: "/farmer/dashboard" });
+    } else {
+      // Has auth session but no profile yet — go to verify
+      navigate({ to: "/verify" });
+    }
+  }, [loading, user, profile, navigate]);
+
+  // Show a minimal loader while checking session on first open
+  // This prevents a flash of the landing page before redirect
+  if (loading || user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#F8FAFC]">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-10 w-10 rounded-full border-[3px] border-[#2E7D32] border-t-transparent animate-spin" />
+          <div className="inline-flex items-baseline gap-1.5">
+            <span className="font-display text-xl font-bold text-[#2E7D32]">AgriLink</span>
+            <span className="text-[9px] uppercase tracking-widest text-[#F9A825]">Solutions</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
