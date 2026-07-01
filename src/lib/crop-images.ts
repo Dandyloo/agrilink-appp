@@ -1,31 +1,31 @@
 // Curated crop image map + helpers shared across listings, prices, and tickers.
 
-const FALLBACK = "https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&q=80"; // generic fresh produce
+const FALLBACK = "https://www.harvestplus.org/wp-content/uploads/2021/08/Orange-maize-2.png";
 
 const MAP: Record<string, string> = {
-  maize: "https://images.unsplash.com/photo-1601593768799-76d3ef0d7a4f?w=600&q=80",
-  tomatoes: "https://images.unsplash.com/photo-1546470427-e26264be0b0d?w=600&q=80",
-  tomato: "https://images.unsplash.com/photo-1546470427-e26264be0b0d?w=600&q=80",
-  yam: "https://images.unsplash.com/photo-1596097635121-14b63b7a0c19?w=600&q=80",
-  plantain: "https://images.unsplash.com/photo-1603833665858-e61d17a86224?w=600&q=80",
-  cocoa: "https://images.unsplash.com/photo-1599639957043-f3aa5c986398?w=600&q=80",
-  cassava: "https://images.unsplash.com/photo-1599321955726-7d6e8b7c3e6f?w=600&q=80",
-  rice: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600&q=80",
-  beans: "https://images.unsplash.com/photo-1612257999691-c63ad2ee5b1f?w=600&q=80",
-  onion: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=600&q=80",
-  onions: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=600&q=80",
-  pepper: "https://images.unsplash.com/photo-1583119912267-cc97c911e416?w=600&q=80",
-  peppers: "https://images.unsplash.com/photo-1583119912267-cc97c911e416?w=600&q=80",
-  groundnut: "https://images.unsplash.com/photo-1567204570206-7a83b310b9ba?w=600&q=80",
-  groundnuts: "https://images.unsplash.com/photo-1567204570206-7a83b310b9ba?w=600&q=80",
-  peanut: "https://images.unsplash.com/photo-1567204570206-7a83b310b9ba?w=600&q=80",
+  maize:      "https://www.harvestplus.org/wp-content/uploads/2021/08/Orange-maize-2.png",
+  tomatoes:   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxn_l5-uZSNaM_Yy8gJLG1QAYHc_uLoYE0CNr7SWV8zw&s=10",
+  tomato:     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxn_l5-uZSNaM_Yy8gJLG1QAYHc_uLoYE0CNr7SWV8zw&s=10",
+  yam:        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBrKHGYlH6n7ecOTWGqsp6-wOa4DrMRm-gJa9lSORP9g&s=10",
+  plantain:   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTanil9y6hUOuh2VamLj_pgabVtZO7vQ9kYyDMiS-AuUw&s=10",
+  cocoa:      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3LT2i_v8BU24OXB6IGidBy3KTzksMIRUl0qDbIxa0cQ&s=10",
+  cassava:    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFCcmQHOmwUFV37ZGEwGrkMpULEE4d9AwuGsWOhYIRTw&s=10",
+  rice:       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBUTxGZqJo5-BElEBEqBfXePS1fNQtbZfxCrYXt5mVDw&s=10",
+  beans:      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIYcEBYJjQ70a8eEb-DMH0KVFH4cbJHsVSNbZLy_-Kqg&s=10",
+  onion:      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfgbJzNcsFhjnw_INNwT4f1_26JNchQLWmRq2yX6WKOA&s=10",
+  onions:     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfgbJzNcsFhjnw_INNwT4f1_26JNchQLWmRq2yX6WKOA&s=10",
+  pepper:     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOWaACxSvC5mlMc8JyXA6D1VjqA_qn84CE3qJojgCClg&s=10",
+  peppers:    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOWaACxSvC5mlMc8JyXA6D1VjqA_qn84CE3qJojgCClg&s=10",
+  groundnut:  "https://www.harvestplus.org/wp-content/uploads/2021/08/Orange-maize-2.png",
+  groundnuts: "https://www.harvestplus.org/wp-content/uploads/2021/08/Orange-maize-2.png",
+  peanut:     "https://www.harvestplus.org/wp-content/uploads/2021/08/Orange-maize-2.png",
 };
 
 export function imageForCrop(name: string | null | undefined): string {
   if (!name) return FALLBACK;
   const key = name.trim().toLowerCase();
   if (MAP[key]) return MAP[key];
-  // try partial match (e.g. "yellow maize")
+  // partial match — e.g. "yellow maize" → maize image
   for (const k of Object.keys(MAP)) if (key.includes(k)) return MAP[k];
   return FALLBACK;
 }

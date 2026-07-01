@@ -20,12 +20,12 @@ export type Listing = {
 };
 
 export const LISTINGS: Listing[] = [
-  { id: "L1", crop: "Maize", farmer: "Kwame Asante", region: "Brong-Ahafo", price: 4.5, qty: 500, available: "2026-07-01", status: "Active", cold: false, image: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400" },
-  { id: "L2", crop: "Tomatoes", farmer: "Abena Mensah", region: "Ashanti", price: 12.0, qty: 200, available: "2026-06-25", status: "Active", cold: true, image: "https://images.unsplash.com/photo-1546470427-e26264be0b0d?w=400" },
-  { id: "L3", crop: "Yam", farmer: "Kofi Boateng", region: "Volta", price: 8.0, qty: 350, available: "2026-07-10", status: "Active", cold: false, image: "https://images.unsplash.com/photo-1596097635121-14b63b7a0c19?w=400" },
-  { id: "L4", crop: "Plantain", farmer: "Ama Owusu", region: "Central", price: 6.5, qty: 400, available: "2026-06-30", status: "Active", cold: false, image: "https://images.unsplash.com/photo-1603833665858-e61d17a86224?w=400" },
-  { id: "L5", crop: "Cocoa", farmer: "Yaw Darko", region: "Western", price: 45.0, qty: 150, available: "2026-08-01", status: "Active", cold: false, image: "https://images.unsplash.com/photo-1606312619070-d48b4c652a52?w=400" },
-  { id: "L6", crop: "Cassava", farmer: "Akosua Frimpong", region: "Eastern", price: 3.2, qty: 600, available: "2026-07-15", status: "Active", cold: false, image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400" },
+  { id: "L1", crop: "Maize",   farmer: "Kwame Asante",    region: "Brong-Ahafo", price: 4.5,  qty: 500, available: "2026-07-01", status: "Active", cold: false, image: "https://www.harvestplus.org/wp-content/uploads/2021/08/Orange-maize-2.png" },
+  { id: "L2", crop: "Tomatoes",farmer: "Abena Mensah",    region: "Ashanti",     price: 12.0, qty: 200, available: "2026-06-25", status: "Active", cold: true,  image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxn_l5-uZSNaM_Yy8gJLG1QAYHc_uLoYE0CNr7SWV8zw&s=10" },
+  { id: "L3", crop: "Yam",     farmer: "Kofi Boateng",    region: "Volta",       price: 8.0,  qty: 350, available: "2026-07-10", status: "Active", cold: false, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBrKHGYlH6n7ecOTWGqsp6-wOa4DrMRm-gJa9lSORP9g&s=10" },
+  { id: "L4", crop: "Plantain",farmer: "Ama Owusu",       region: "Central",     price: 6.5,  qty: 400, available: "2026-06-30", status: "Active", cold: false, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTanil9y6hUOuh2VamLj_pgabVtZO7vQ9kYyDMiS-AuUw&s=10" },
+  { id: "L5", crop: "Cocoa",   farmer: "Yaw Darko",       region: "Western",     price: 45.0, qty: 150, available: "2026-08-01", status: "Active", cold: false, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3LT2i_v8BU24OXB6IGidBy3KTzksMIRUl0qDbIxa0cQ&s=10" },
+  { id: "L6", crop: "Cassava", farmer: "Akosua Frimpong", region: "Eastern",     price: 3.2,  qty: 600, available: "2026-07-15", status: "Active", cold: false, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFCcmQHOmwUFV37ZGEwGrkMpULEE4d9AwuGsWOhYIRTw&s=10" },
 ];
 
 export type EscrowStatus = "Funds Held" | "Ready for Delivery" | "In Transit" | "Delivered" | "Released to Farmer";
